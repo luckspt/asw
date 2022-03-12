@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!-- saved from url=(0126)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/102/ASW-2122-TP01-Introducao.html?time=1646647154737 -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+	<meta name="revised" content=" de Fevereiro, 2020">
+  <meta name="revised" content="14 de Fevereiro, 2021">
+  <meta name="revised" content="2 de Março, 2022">
+	<title>Introdução ao ambiente no laboratório: - Aplicações e Serviços na Web 2021/2022</title>
+  <link href="./Introdução ao ambiente no laboratório_ - Aplicações e Serviços na Web 2021_2022_files/css" rel="stylesheet" type="text/css">
+  <link href="./Introdução ao ambiente no laboratório_ - Aplicações e Serviços na Web 2021_2022_files/1819ASW.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>1ª Aula Teórico-Prática</h4>
+
+
+ <h5>Sumário</h5>
+O propósito desta aula é:
+<ol type="I">
+  <li> apresentação do funcionamento das aulas teórico-práticas;
+  </li><li> configurar a sua conta no servidor;
+  </li><li> explorar o funcionamento do browser e da resolução de pedidos HTTP;
+  </li><li> criar uma aplicação web muito simples, revendo os conceitos adquiridos em disciplinas anteriores e
+   demonstrando alguma criatividade individual para o projeto - para ser mais tarde consolidada com os restantes elementos do grupo.
+</li></ol>
+
+<ol type="I">
+<li><h5>Apresentação do funcionamento das aulas teórico-práticas</h5>
+<ol>
+    <li>Trabalho individual: cada aluno com um posto de trabalho/computador;
+  </li><li>Cada aula TP é suportada por um guião com exercícios;
+  </li><li>Após a realização do guião deve confirmar com o docente e apresentar os diversos exercícios respeitando a numeração;
+  </li><li>Em cada aula, o aluno obtém uma classificação de 0 a 3 valores, baseado no nível de completude e correção do guião;
+  </li><li>Após a realização de todos os exercícios o aluno pode sair ou continuar na sala a trabalhar no projeto e a esclarecer dúvidas.
+</li></ol>
+  
+</li><li><h5>Configurar a conta no servidor</h5>
+<ol>
+<li> No ambiente Linux, abra uma linha de comandos e faça SSH para o appserver-01, o
+  servidor que contem um servidor Web (Apache) com PHP e um SGBD, MySQL.
+  <xmp>
+    $ ssh aswNN@appserver-01.alunos.di.fc.ul.pt
+    </xmp>
+[em que NN é o seu no. de grupo, , p.e., 01]
+<p>Em Windows poderá utilizar o utilitário PUTTY que se encontra instalado nas
+  imagens do laboratório para fazer a ligação ao servidor.</p>
+</li><li> Depois de entrar modifique a sua password, que é igual ao username, usando o comando
+passwd<br>
+</li><li> No appserver-01,  verifique as permissões da directoria public_html e
+  valide se tem as permissões para que o Apache tenha privilégios de leitura e
+  execução sobre todos os ficheiros.
+
+  <xmp>
+    $ chmod -R 755 public_html
+    </xmp>
+
+</li><li> Dentro da directoria public_html, crie uma directoria só para si, 
+  com o seu número de aluno MMMMM
+  <xmp>
+    $ mkdir ~/public_html/MMMMM
+    $ chmod -R 755 public_html/MMMMM
+  </xmp>
+</li><li> Dentro da directoria public_html/MMMMM, crie uma directoria tp01 só para
+  para esta aula. 
+  Deverá proceder de igual modo para as aulas seguintes (tp02 ...):
+  <xmp>
+    $ mkdir ~/public_html/MMMMM/tp01
+    $ chmod -R 755 public_html/MMMMM/tp01
+  </xmp>
+  </li><li> Dentro da directoria public_html/MMMMM/tp01, crie um ficheiro
+    designado "ola.html" com uma página simples em HTML.
+    Pode usar o emacs ou outro editor de texto. 
+    Mude as permissões deste ficheiro para serem idênticas às do diretório.
+ Ou se preferir um comando cat ou echo:
+    <xmp>
+      $ cd ~/public_html/MMMMM/tp01
+      $ echo "<html><h2>Ola Mundo</h2></html>" > ola.html
+      $ chmod -R 755 public_html/MMMMM/tp01/ola.html
+       </xmp>
+
+<p></p>
+</li><li> No browser verifique se essa página está acessível através do URL:
+  <xmp>
+http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp01/ola.html
+</xmp>
+Note que não existe aqui referência à directoria public_html.
+O nome desta directoria é definido pelo
+servidor de páginas web, que assume como sendo a área do utilizador
+de onde serve os conteúdos web.
+
+</li></ol>
+
+</li><li><h5>Explorar o funcionamento do browser e da resolução de pedidos HTTP</h5>
+<ol>
+<li> Use o comando curl no terminal para aceder ao appserver-01 usando o porto 80 (HTTP)
+  e use o comando GET do HTTP para ver a sua página – comando numa única linha:
+  <xmp>
+$ curl --request GET http://appserver-01.alunos.di.fc.ul.pt:80/~aswNN/MMMMM/tp01/ola.html
+  </xmp>
+  ou simplesmente
+  <xmp>
+$ curl http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp01/ola.html
+</xmp>
+</li><li> Usando as opções –v e –I do comando curl visualize o pedido e a resposta HTTP
+  (neste caso só é mostrado o header da resposta e não o conteúdo HTML):
+  <xmp>
+    $ curl -I -v http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp01/ola.html
+    </xmp>
+</li><li> Usando comando curl, altere o anterior pedido HTTP de forma a informar (erradamente) o
+servidor que está a utilizar um smartphone BlackBerry em vez do curl. Verifique a alteração
+  no pedido feito.
+  <xmp>
+$ curl -I -v http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp01/ola.html --
+user-agent "BlackBerry8100/4.2.1"
+</xmp>
+</li><li> Teste o protocolo HTTP com outros sites web.
+Verifique as diferentes respostas HTTP, por exemplo, 200 OK, 404 Not Found, 302
+  Moved Permanently, ao aceder a diferentes endereços. Por exemplo:
+  <xmp>
+http://moddle.fc.ul.pt
+http://moodle.ciencias.ulisboa.pt
+http://appserver-01.alunos.di.fc.ul.pt/~naoexiste/
+http://appserver.di.fc.ul.pt/~aswNN
+</xmp>
+OPCIONAL: faça “man curl“ no terminal e explore as várias opções de recuperação e
+visualização de informação para este comando.
+
+</li></ol>
+</li><li><h5>Criar a sua primeira aplicação web</h5>
+
+<ol>
+
+  <li> No file manager vá a GO &gt; OPEN LOCATION e escreva este endereço:
+    <xmp>
+      ssh://aswNN@appserver-01.alunos.di.fc.ul.pt/home/aswNN
+       </xmp>
+Faça a ligação e pode navegar nos seus ficheiros como se fosse uma pasta local.
+Nota: Em Windows para se ligar ao servidor poderá usar o WinSCP ou o filezilla.
+
+
+</li><li>  
+  Demonstre aqui a sua criatividade individual, quer na escolha dos conteúdos,
+  quer na apresentação dos mesmos.
+  Esta deverá ser mais tarde consolidada no projeto (ReFood-FCUL),
+  com a dos restantes elementos do grupo.
+  
+  No cliente crie, usando um editor de HTML, uma página Web (index.html) para a
+  apresentação do projeto. Deverá conter:
+  <ol type="a">
+<li> um template (default.css) que defina os headers e as características do texto (tipo
+de letra, dimensão, alinhamento e cor de fundo ), ou, melhor use uma framework de css à escolha (W3.CSS ou BootStrap).
+</li><li> Uma imagem relacionada (por exemplo, logótipo da ReFood-FCUL), colocada no canto superior esquerdo da página - pode fazer uma procura na web e deve fazer o respetivo download na pasta 
+  <xmp>
+    ~aswNN/MMMMM/tp01/
+   </xmp>
+</li><li> O texto de apresentação do negócio - pode adaptar texto do enunciado do projeto e de instituição semelhantes.
+</li><li>  um link para outra página, "about.html", que conterá a informação sobre os
+  construtor da página (você mesmo), data, local e versão usando o mesmo CSS da página inicial.
+  </li></ol>
+</li><li>  Visualize localmente a qualidade da página.
+</li><li>  Transfira os ficheiros deste Exercício para a sua área.
+  Use para isso o comando ssh para mapear uma drive local, ou o filezilla e
+  copie os ficheiros todos para um diretório dentro da pasta public_html.
+</li><li>  Verifique se a página está correta acedendo a
+  <xmp>
+    http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp01/index.html
+    </xmp>
+Não se esqueça de mudar a permissões de acesso aos ficheiros!
+
+</li></ol>
+</li></ol>
+
+
+</body></html>
