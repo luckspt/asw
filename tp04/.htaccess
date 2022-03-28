@@ -1,0 +1,5 @@
+	AuthType Basic
+	AuthName "Acesso Autenticado"
+	AuthUserFile /home/asw21/public_html/56926/tp04/.htpasswd
+	Require valid-user
+
