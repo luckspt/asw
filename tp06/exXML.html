@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Voluntários - Refood</title>
+</head>
+<html>
+<body>
+<h2 id="cabecalho">Voluntários - Refood</h2>
+<script>
+
+    txtXml = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>'+
+        '<voluntario telef="923147851"><email>fc56926@gmail.com</email>'+
+        '<nome><primeiro>Lucas</primeiro><ultimo>Pinto</ultimo></nome>'+
+        '<grupo>21</grupo>'+'<nascido>2002</nascido>'+
+        '<morada><rua>D. Teodósio</rua><numero>314</numero><cidade>Lisboa</cidade></morada>'+
+        '</voluntario>';
+
+    parser = new DOMParser();
+
+    xelem = parser.parseFromString(txtXml,"text/xml");
+
+    primeiro = xelem.getElementsByTagName("primeiro")[0].childNodes[0].nodeValue;
+    ultimo = xelem.getElementsByTagName("ultimo")[0].childNodes[0].nodeValue;
+    document.getElementById("cabecalho").innerHTML = "O meu nome é " + ultimo +", " + primeiro +" "+ ultimo+ "!";
+
+</script>
+</body>
+</html>

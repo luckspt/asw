@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Voluntarios</title>
+</head>
+<body>
+
+<h2>Get data as XML file from the server.</h2>
+
+<p id="demo"></p>
+
+<script>
+    var xhttp = new XMLHttpRequest();
+
+    // funcionamento síncrono (false)
+
+    xhttp.open("GET","voluntarios.xml",false);
+
+    xhttp.send();
+
+    var papeis=xhttp.responseXML;
+
+    var voluntarios=papeis.getElementsByTagName("nome");
+
+    // não necessita de parse
+    /*
+        parser = new DOMParser();
+        xelem = parser.parseFromString(papeis,"text/xml");
+        var voluntarios=xelem.getElementsByTagName("nome");
+    */
+
+    for (i=0;i<voluntarios.length;i++) {
+        document.write(voluntarios[i].childNodes[0].textContent);
+        //  OU	document.write(voluntarios[i].childNodes[0].nodeValue);
+        document.write("<br>");
+    }
+</script>
+</body>
+</html>

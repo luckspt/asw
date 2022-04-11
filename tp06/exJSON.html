@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Voluntários - Refood</title>
+</head>
+<body>
+<h2 id="cabecalho">Voluntários - Refood</h2>
+<script>
+    var text = 	'{"telef": 923147851, "email": "fc56926@gmail.com",'+
+        '"nome":["Lucas","Pinto"],'+
+        '"grupo":"ASW21","nascido": 2002,'+
+        '"morada": {"rua": "D. Teodósio", "numero": 314, "cidade": "Lisboa"} }';
+
+    var voluntario = JSON.parse(text);
+
+    document.getElementById("cabecalho").innerHTML = "O meu nome é: " + voluntario.nome[1]+", "
+        + voluntario.nome[0] +" "+ voluntario.nome[1]+ "!";
+</script>
+</body>
+</html>

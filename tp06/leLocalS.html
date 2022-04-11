@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Retrieve data from local storage.</h2>
+<p id="demo"></p>
+<script>
+    var text, obj;
+    // Retrieving data:
+    text = localStorage.getItem("testJSON");
+    obj = JSON.parse(text);
+    document.getElementById("demo").innerHTML = obj.morada.rua;
+</script>
+</body>
+</html>

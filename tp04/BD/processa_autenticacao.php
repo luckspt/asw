@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require_once '../../tp02/abreconexao.php';
 
 $email = htmlspecialchars($_POST["email"]);
@@ -16,7 +13,8 @@ if (!$passwd) {
 }
 
 $query = $conn->prepare("SELECT * FROM `utilizador` WHERE `email`=?");
-$query->execute([$email]);
+$query->bind_param('s', $email);
+$query->execute();
 
 $res = $query->get_result();
 $row = $res ->fetch_assoc();
