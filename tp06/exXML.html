@@ -7,22 +7,32 @@
 <body>
 <h2 id="cabecalho">Voluntários - Refood</h2>
 <script>
+    const txtXml = `
+        <?xml version='1.0' encoding='UTF-8'?>
+            <voluntario telef="923147851">
+                <email>fc56926@gmail.com</email>
+                <nome>
+                    <primeiro>Lucas</primeiro>
+                    <ultimo>Pinto</ultimo>
+                </nome>
+            <grupo>21</grupo>
+            <nascido>2002</nascido>
+            <morada>
+                <rua>D. Teodósio</rua>
+                <numero>314</numero>
+                <cidade>Lisboa</cidade>
+            </morada>
+        </voluntario>`;
 
-    txtXml = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>'+
-        '<voluntario telef="923147851"><email>fc56926@gmail.com</email>'+
-        '<nome><primeiro>Lucas</primeiro><ultimo>Pinto</ultimo></nome>'+
-        '<grupo>21</grupo>'+'<nascido>2002</nascido>'+
-        '<morada><rua>D. Teodósio</rua><numero>314</numero><cidade>Lisboa</cidade></morada>'+
-        '</voluntario>';
+    const parser = new DOMParser();
 
-    parser = new DOMParser();
+    xelem = parser.parseFromString(txtXml, "text/xml");
+    console.log(xelem)
 
-    xelem = parser.parseFromString(txtXml,"text/xml");
+    const primeiro = xelem.getElementsByTagName("primeiro")[0].childNodes[0].nodeValue;
+    const ultimo = xelem.getElementsByTagName("ultimo")[0].childNodes[0].nodeValue;
 
-    primeiro = xelem.getElementsByTagName("primeiro")[0].childNodes[0].nodeValue;
-    ultimo = xelem.getElementsByTagName("ultimo")[0].childNodes[0].nodeValue;
-    document.getElementById("cabecalho").innerHTML = "O meu nome é " + ultimo +", " + primeiro +" "+ ultimo+ "!";
-
+    document.getElementById("cabecalho").innerHTML = `O meu nome é ${ultimo}, ${primeiro} ${ultimo}!`;
 </script>
 </body>
 </html>

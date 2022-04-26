@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<!-- saved from url=(0125)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW-2122-TP02-MySQL-PHP.html?time=1648120954631 -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+	<meta name="revised" content="24 de Fevereiro, 2019">
+  <meta name="revised" content="06 de Março, 2020">
+  <meta name="revised" content="18 de Fevereiro, 2021">
+  <meta name="revised" content="13 de Março, 2022">
+	<title>Introdução ao PHP e MySQL: - Aplicações e Serviços na Web 2021/2022</title>
+	<link href="./enunciado_files/css" rel="stylesheet" type="text/css">
+	<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>2ª Aula Teórico-Prática</h4>
+
+
+<h5>Sumário</h5>
+O propósito desta aula é:
+<ol type="I">
+  <li> Configurar a conta no servidor MySQL e manipular dados usando o respetivo cliente;
+  </li><li> Criar página web com um pequeno script PHP;
+  </li><li> Verificar exemplo de acesso ao servidor MySQL via PHP;
+  </li><li> Construir uma aplicação Web para manipular e consultar dados de uma base de dados MySQL;
+</li></ol>
+
+<ol type="I">
+<li><h5>Configurar a conta no servidor MySQL e manipular dados usando o respetivo cliente</h5>
+
+ 
+Foram criadas áreas MySQL para os grupos da disciplina. O username e a password são
+idênticas às de acesso ao servidor.
+<p></p>
+<ol>
+
+<li>O MySQL dispõe de um ambiente de trabalho que permite a gestão de tabelas
+e dos respetivos dados usando uma ferramenta com interface gráfica via web
+(phpMyAdmin). Para aceder à sua base de dados através da interface gráfica do
+phpMyAdmin escreva o seguinte endereço no browser Web:
+<xmp>
+http://appserver-01.alunos.di.fc.ul.pt/phpmyadmin/
+  </xmp>
+No campo username escreva aswNN, e respetiva senha em passwd. Após autenticação e
+no separador databases, escolha a base de dados com o mesmo nome do seu utilizador.
+Finalmente, para executar os comandos dos exercícios seguintes utilize a caixa de texto
+acessível através do separador SQL.
+Altere a senha associada ao seu grupo, através do comando
+
+<xmp>
+SET PASSWORD =
+PASSWORD('nova senha');
+   </xmp>
+
+
+<!--<h5>[Alternativa]</h5>
+Usando o cliente de MySQL teste a sua conta no mysql:
+   <xmp>
+    $ mysql -u aswXXX –h appserver-01.alunos.di.fc.ul.pt –p
+    </xmp>
+  Ou, já na ssh aswXXX@appserver-01.alunos.di.fc.ul.pt faça apenas
+<xmp>
+$ mysql -p
+ </xmp>
+ 
+ Já tem acesso a uma base de dados que tem o mesmo nome do grupo, e deverá ligar-se
+a ela:
+<xmp>
+mysql > use aswXXX
+  </xmp>
+Altere a senha associada ao seu grupo, através do comando
+<xmp>
+SET PASSWORD =PASSWORD('nova senha');
+  </xmp>
+-->
+<p></p>
+  </li><li>Crie uma tabela com o nome utilizador constituída por 4 atributos: nome, idade, email e passwd. O nome deverá ser a
+chave primária;
+<p></p>
+  </li><li>Refresque os seus conhecimentos de SQL:
+  <ol type="a">
+<li>  Insira dois utilizadores (INSERT INTO)
+</li><li> Selecione uma delas (SELECT)
+</li><li> Modifique o nome de um utilizador (UPDATE)
+</li><li> Apague um utilizador da base de dados (DELETE FROM)
+</li></ol>
+  
+  
+ </li></ol>
+  
+  
+  </li><li><h5>Criar página web com um pequeno script PHP</h5>
+  
+  <ol>
+
+    <li> Dentro da directoria <code>~/public_html/MMMMM</code>, crie uma directoria <code>tp02</code> só para para esta aula:
+      <xmp>
+        $ mkdir ~/public_html/MMMMM/tp02
+        $ chmod -R 755 public_html/MMMMM/tp02
+      </xmp>
+
+
+
+</li><li> Crie uma página <code>tp02.php</code> na sua directoria <code>~/public_html/MMMMM/tp02</code> com conteúdo a seguir
+indicado (atenção à extensão!).
+Todos os programas PHP começam com <code>&lt;?php</code> e terminam com <code>?&gt;</code>. O comando <code>echo</code> serve
+para ir compondo a resposta ao pedido do utilizador. No Browser verifique se o PHP está a
+executar da forma esperada.
+
+<xmp>
+<html><body>
+  <?php echo "<p> Alo Mundo! </p>"; ?>
+</body> </html>
+  </xmp>
+
+</li><li> Modifique o programa anterior criando um array associativo em PHP com os nomes das
+  suas pessoas preferidas (ou ídolos) e com o respetivo ano de nascimento aproximado.
+Apresente numa página HTML com cada elemento numa linha.
+
+<xmp>
+<?php
+$age = array("Francisco"=>"1935", "Ghandi"=>"1898", "Maria"=>"1970");
+
+foreach($age as $x => $x_value) {
+    echo "Key=" . $x . ", Value=" . $x_value;
+    echo "<br>";
+}
+?>
+</xmp>
+
+</li><li> PHP e pedidos do Browser.
+Crie um programa <code>pdata.php</code> com o seguinte conteúdo:
+
+<xmp>
+<html><body>
+  Bem vindo
+  <?php echo "<h2>" . $_GET["nome"] . "</h2>"; ?>
+</body></html>
+  </xmp>
+Teste através do seguinte pedido no browser:
+<xmp>
+http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp02/pdata.php?nome=ana
+</xmp>
+O ambiente de execução PHP disponibiliza duas variáveis de tipo array associativo
+chamadas $_GET e $_POST, que permitem fazer o encaminhamento de dados para o
+ambiente de execução de programas e preenchidas automaticamente com os valores
+adequados.
+
+Por exemplo, $_GET["nome"] terá o valor ”ana” aquando de um pedido do tipo anterior e/ou, resultado de um formulário.
+Considere o seguinte formulário:
+
+<xmp>
+<html><body>
+  <form action="pdata.php" method="get"> Nome:
+    <input type="text" name="nome"><br>
+    <input type="submit"> </form>
+  </body></html>
+  </xmp>
+Teste com diferentes valores de nome.
+No caso de serem submetidos vários dados (por exemplo, nome e idade) a separação dos seus valores no endereço é feita através do simbolo &amp;.
+Por exemplo, http://servidor.pt/pdata.php?nome=ana&amp;idade=21 representaria uma pesquisa feita com o nome ana e idade 21.
+Neste caso, $_GET["nome"] teria o valor ana, e o $_GET["idade"] teria o valor 21
+  
+</li></ol>  
+ 
+</li><li><h5>Verificar exemplo de acesso ao servidor MySQL via PHP</h5>
+<ol>
+<li> Para codificarmos em PHP uma pesquisa, inserção, actualização ou remoção de informação de
+  uma BD é necessário aceder à base de dados.
+Para que o código deste acesso não seja repetido em todos os programas que necessitem de aceder
+à base de dados, vamos criar um programa <code>abreconexao.php</code> que será posteriormente utilizado.
+<br>
+Analise o comando <code>php mysqli_connect</code> bem como restante código seguinte.
+Deve substituir NN pelo seu número de grupo e a senha pela senha de acesso à sua área MySQL.
+
+<xmp>
+<?php
+$dbhost = "appserver-01.alunos.di.fc.ul.pt";
+$dbuser = "aswNN";
+$dbpass = "A_sua_senha_do_MySQL";
+$dbname = "aswNN";
+// Cria a ligação à BD
+$conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+// Verifica a ligação à BD
+if (mysqli_connect_error()) {
+  die("Database connection failed: " . mysqli_connect_error());
+}
+?>
+  </xmp>
+
+</li><li> Veja o programa descrito em seguida e tente perceber o propósito de cada bloco de código.
+  Analise o comando <code>php mysqli_query</code> bem como restante código.
+  Coloque este código num ficheiro de nome <code>insere.php</code>.
+  A partir deste programa insira nova informação na tabela utilizador (exercício I) e
+  verifique que ela ficou armazenanada na BD. 
+
+<xmp>
+<?php
+// Estabelece uma ligação com a base de dados usando o programa abreconexao.php
+// A variável $conn é inicializada com a ligação estabelecida
+include "abreconexao.php";
+$query = "insert into utilizador values ('O_seu_nome',A_sua_idade,'o_seu_email','a_sua_passwd')";
+$res = mysqli_query($conn, $query); if ($res) {
+  echo "Um novo registo inserido com sucesso";
+} else {
+  echo "Erro: insert failed" . $query . "<br>" . mysqli_error($conn);
+}
+// Termina a ligação com a base de dados
+mysqli_close($conn);
+?>
+  </xmp>
+
+
+
+  Veja o programa descrito em seguida e tente perceber o propósito de cada bloco de código.
+  Analise o comando <code>php mysqli_fetch_assoc</code> bem como restante código.
+  Coloque este código num ficheiro de nome <code>seleciona.php</code>.
+  A partir deste programa consulte a informação no utilizador (exercício I).
+
+<xmp>
+<?php
+// Estabelece uma ligação com a base de dados usando o programa abreconexao.php
+// A variável $conn é inicializada com a ligação estabelecida
+include "abreconexao.php";
+
+$sql = "SELECT * FROM utilizador";
+
+$result=mysqli_query($conn, $sql);
+
+if (mysqli_num_rows($result) > 0) {
+    // output data of each row
+	while($row = mysqli_fetch_assoc($result)) {
+	echo "Nome: " . $row["nome"]. " - Idade: " . $row["idade"]. "<br> ";
+    }
+} else {
+    echo "Não existem utilizadores";
+}
+
+mysqli_close($conn);
+
+?>
+  </xmp>
+
+
+Experimente inserir no início deste programa instruções para fazer debug do PHP
+<xmp>
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+</xmp>
+Pode e deve utilizar este código sempre que tenha alguma dificuldade com código PHP
+
+</li></ol>
+
+</li><li><h5>Página Web para manipular uma base de dados MySQL (a integrar no projeto ReFood-FCUL)</h5>
+
+<ol>
+  
+<li>Crie uma página Web com um formulário para a inserção dos dados do utilizador
+- no ficheiro <code>formulario.php</code></li>.
+<br>Observação: Para a versão PHP do appserver, o acesso aos dados de um formulário HTML deve ser feita via POST.
+<br><br>
+<li>Deve validar (com PHP) cada um dos atributos a inserir no utilizador. </li>
+<ul>
+  <li>Nome: exclusivamente com caracteres alfabéticos</li>
+  <li>Idade: dentro de valores numéricos naturais</li>
+  <li>Email: com username@domain</li>
+  <li>Passwd: com um mínimo de 8 carateres</li>
+</ul>
+<br>
+Visite <strong>https://www.w3schools.com/php/php_forms.asp</strong> para estas capacidades essenciais do PHP. 
+<br><br>
+<li>Para guardar na base de dados a passwd encriptada, analise a função <code>password_hash</code>. 
+<br>
+</li><li>Quando cria um formulário deve ter sempre em consideração os aspetos de segurança. Introduza tags e links HTML nos elementos do formulário e verifique as consequências no output.
+<br>
+</li><li>Corrija o problema usando a função <code>htmlspecialchars()</code>. Visite www.w3schools.com/php/php_form_validation.asp para ver como deverá construir formulários seguros.
+<br>
+
+</li><li><h5>Bibliografia</h5>
+<ul>
+<li>PHP Manual: http://php.net/manual/en/
+</li><li>PHP Tutorial W3 Schools: https://www.w3schools.com/php/
+  </li><li>PHP Tutorial W3 Schools:  https://www.w3schools.com/php/php_forms.asp
+</li></ul>
+</li></ol>
+
+
+
+
+</li></ol></body></html>

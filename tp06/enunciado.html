@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<!-- saved from url=(0102)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP06JSONeXML.html -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+	<meta name="revised" content="22 de março, 2020">
+	<meta name="revised" content="22 de março, 2021">
+	<meta name="revised" content="8 de Abril, 2022">
+	<title>XML e JSON - ASW 2021/22</title>
+	<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>6ª Aula Teórico-Prática - JSON e XML</h4>
+
+Nesta aula realizam-se alguns exercícios de processamento de informação em XML e JSON com JavaScript.
+<br>
+Na aula da semana passada instalou-se e criaram-se serviços num servidor Lumen numa directoria para algum trabalho com o seu grupo de projecto ASW.
+<br>
+Esta semana regressamos ao modelo de trabalho exclusivamente individual.<br>
+<br>
+Assim, na área de grupo no servidor
+<code>appserver-01.alunos.di.fc.ul.pt</code> crie uma directoria <code>tp06</code> só para si para esta aula:
+
+
+<xmp>
+$ mkdir ~/public_html/MMMMM/tp06
+$ chmod -R 755 ~/public_html/MMMMM/tp06
+$ cd ~/public_html/MMMMM/tp06
+</xmp>
+
+<h4>Guião da aula</h4>
+  <ol type="I">
+    <li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP06JSONeXML.html#XML">Formato XML</a></li>
+	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP06JSONeXML.html#JSON">Formato JSON</a></li>
+	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP06JSONeXML.html#JSONlocalStorage">Uso de JSON na localStorage</a></li>
+  </ol><hr>
+
+  <a name="XML"></a>
+  <ol type="I"> 
+
+
+<li><h5>Formato XML</h5>
+	
+	Crie o ficheiro HTML <code>exXML.html</code> com o seguinte conteúdo JavaScript, para apresentar o nome de voluntários de uma base de dados em formato XML
+ – a pequena base de dados contida na variável do JavaScript.
+
+
+<xmp>
+	<!DOCTYPE html>
+	<head>
+	  <meta charset="utf-8">
+	  <title>Voluntários - Refood</title>
+	</head>
+	<html>
+	<body>
+	<h2 id="cabecalho">Voluntários - Refood</h2>
+	<script>
+	
+		txtXml = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>'+
+					'<voluntario telef="923147851"><email>fcMMMMM@gmail.com</email>'+
+					'<nome><primeiro>o_seu_primeiro_nome</primeiro><ultimo>o_seu_ultimo_nome</ultimo></nome>'+
+					'<grupo>NN</grupo>'+'<nascido>2002</nascido>'+
+					'<morada><rua>D. Teodósio</rua><numero>314</numero><cidade>Lisboa</cidade></morada>'+
+					'</voluntario>';
+	
+		parser = new DOMParser();
+		
+		xelem = parser.parseFromString(txtXml,"text/xml");
+		
+		primeiro = xelem.getElementsByTagName("primeiro")[0].childNodes[0].nodeValue;
+		ultimo = xelem.getElementsByTagName("ultimo")[0].childNodes[0].nodeValue;
+		document.getElementById("cabecalho").innerHTML = "O meu nome é " + ultimo +", " + primeiro +" "+ ultimo+ "!";
+		
+	</script>
+	</body>
+	</html>
+	
+</xmp>
+
+
+<a name="JSON"></a>
+</li><li><h5>JSON</h5>
+
+	JSON versus XML:
+<ul>
+	<li>
+O JSON é muito mais fácil de analisar do que o XML.</li><li>
+O JSON é analisado como um objeto JavaScript pronto a usar.</li>
+Também por estes motivos, o JSON é habitualmente usado nos processos de memória dos navegadores web.<br>
+
+</ul>
+<p></p>
+<ol>
+<li>Repita o Exercício 1 para uma base de dados em formato JSON.
+	Crie o ficheiro HTML <code>exJSON.html</code> com o seguinte conteúdo:
+
+<xmp>
+<!DOCTYPE html>
+	<html>
+	<head>
+	  <meta charset="utf-8">
+	  <title>Voluntários - Refood</title>
+	</head>
+	<body>
+		<h2 id="cabecalho">Voluntários - Refood</h2>
+		<script>
+			var text = 	'{"telef": 923147851, "email": "fcMMMMM@gmail.com",'+
+						'"nome":["o_seu_primeiro_nome","o_seu_ultimo_nome"],'+
+						'"grupo":"ASWNN","nascido": 2002,'+
+						'"morada": {"rua": "D. Teodósio", "numero": 314, "cidade": "Lisboa"} }';
+		
+			var voluntario = JSON.parse(text);
+	
+			document.getElementById("cabecalho").innerHTML = "O meu nome é: " + voluntario.nome[1]+", "
+				+ voluntario.nome[0] +" "+ voluntario.nome[1]+ "!"; 
+		</script>
+	</body>
+	</html>
+</xmp>
+
+<p></p>
+</li><li> Crie um ficheiro <code>voluntarios.xml</code> em XML com os elementos do seu grupo como voluntarios, por ordem alfabética do primeiro nome,
+	e para os quais se
+inventou aqui um NIF (como atributo do voluntario), o telefone e a morada - que contém
+endereço, código postal, cidade e distrito. Coloque esse documento no servidor.
+
+
+<xmp>
+<?xml version="1.0" encoding="UTF-8"?>
+<voluntarios>
+	<voluntario NIF="123456789">
+		<nome>nome_do_membro1</nome>
+		<telefone>987654321</telefone>
+		<morada>
+			<endereco>R. Combatentes da Grande Guerra, 1</endereco>
+			<codigo-postal>1234-123</codigo-postal>
+			<cidade>Arrazadela</cidade>
+			<distrito>Porto</distrito>
+		</morada>
+	</voluntario>
+	<!-- comentário -->
+	<voluntario NIF="123456790">
+		<nome>nome_do_membro2</nome>
+		<telefone>987654322</telefone>
+		<morada>
+			<endereco>R. Combatentes da Grande Guerra, 2</endereco>
+			<codigo-postal>1235-124</codigo-postal>
+			<cidade>Carcozelo</cidade>
+			<distrito>Lisboa</distrito>
+		</morada>
+	</voluntario>
+	<voluntario NIF="123456791">
+		<nome>nome_do_membro3</nome>
+		<telefone>987654323</telefone>
+		<morada>
+			<endereco>R. Combatentes da Grande Guerra, 3</endereco>
+			<codigo-postal>1236-125</codigo-postal>
+			<cidade>Tapapelo</cidade>
+			<distrito>Faro</distrito>
+		</morada>
+	</voluntario>
+</voluntarios>
+
+</xmp>
+
+<p></p>
+</li><li> Crie e teste o ficheiro HTML <code>exFileXML.html</code> com o seguinte conteúdo JavaScript, para recuperar a lista de voluntarios.
+
+
+<xmp>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Voluntarios</title>
+</head>
+<body>
+
+<h2>Get data as XML file from the server.</h2>
+
+<p id="demo"></p>
+
+<script>
+	var xhttp=new XMLHttpRequest();
+
+	// funcionamento síncrono (false)
+
+	xhttp.open("GET","voluntarios.xml",false);
+	
+	xhttp.send();
+	
+	var papeis=xhttp.responseXML;
+	
+	var voluntarios=papeis.getElementsByTagName("nome");
+	
+	// não necessita de parse		
+	/*
+		parser = new DOMParser();
+		xelem = parser.parseFromString(papeis,"text/xml");
+		var voluntarios=xelem.getElementsByTagName("nome");
+	*/
+	
+	for (i=0;i<voluntarios.length;i++) {
+		document.write(voluntarios[i].childNodes[0].textContent);
+	//  OU	document.write(voluntarios[i].childNodes[0].nodeValue);
+		document.write("<br>");
+	}
+</script>
+</body>
+</html>
+</xmp>
+</li>
+</ol>
+
+<p></p>
+<a name="JSONlocalStorage"></a>
+</li><li> <h5 id="JSON">Uso de JSON na localStorage</h5>
+
+	O armazenamento da web em HTML5 fornece dois objetos para armazenar dados no voluntario:
+	<ul>
+	  <li>window.localStorage - armazena dados sem data de expiração;
+	  </li><li>window.sessionStorage - armazena dados para uma sessão - os dados são perdidos quando o navegador é fechado.
+	</li></ul>
+	<br>
+	De seguida vamos ver um exemplo em que se coloca um objeto JSON na <strong>localStorage </strong>.
+	<br><br>
+	<ol>
+	<li> Crie o ficheiro <strong>criaLocalS.html</strong> seguinte para colocar um objecto JSON na <strong>localStorage</strong>.
+	  <xmp>
+	<!DOCTYPE html>
+	<html>
+	<body>
+	<h2>
+	Store data into local storage.</h2>
+	<p id="demo"></p>
+	<script>
+	var myObj, myJSON;
+	// Storing data:
+	myObj = { telef: 923147851,
+			email: "fcMMMMM@gmail.com",
+			nome:["o_seu_primeiro_nome","o_seu_ultimo_nome"],
+			grupo:"ASWNN",nascido: 2002,
+			morada: {rua: "D. Teodósio", numero: 314, cidade: "Lisboa"} };
+
+
+	myJSON = JSON.stringify(myObj);
+	localStorage.setItem("testJSON", myJSON);
+	</script>
+	</body>
+	</html>
+	</xmp>
+	<br>
+	</li>
+	<li>Verifique a existência deste objecto no <strong>localStorage</strong>
+	  do navegador web - no Chrome está na tab das aplicações do inspector.
+	  <br> <br>
+	 </li><li> Crie o ficheiro <strong>leLocalS.html</strong> seguinte para recuperar informação do objecto JSON a ser apresentada no HTML do navegador.
+	<xmp>
+	<!DOCTYPE html>
+	<html>
+	<body>
+	<h2>Retrieve data from local storage.</h2>
+	<p id="demo"></p>
+	<script>
+		var text, obj;
+	// Retrieving data:
+		text = localStorage.getItem("testJSON");
+		obj = JSON.parse(text);
+		document.getElementById("demo").innerHTML = obj.morada.rua;
+	</script>
+	</body>
+	</html>
+	</xmp>
+	</li>
+	</ol>
+
+
+
+
+</li><li><h5 id="biblio">Bibliografia</h5>
+	<ul>
+		<li><a href="http://www.w3schools.com/xml/">Tutorial de XML</a></li>
+		<li><a href="http://www.w3schools.com/js/js_json_intro.asp">Tutorial de JSON</a></li>
+		 
+    	</ul>
+</li>
+
+</ol>
+
+
+</body></html>

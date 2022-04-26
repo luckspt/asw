@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<!-- saved from url=(0122)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP03Dados-Web.html?time=1647875342903 -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="author" content="Emanuel Santos">
+<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+<meta name="revised" content="15 de março, 2020">
+<meta name="revised" content="21 de fevereiro, 2021">
+<meta name="revised" content="19 de março, 2022">
+<title>Aula de Laboratório sobre Aplicações na Web - 2021/2022</title>
+<link href="./enunciado_files/css" rel="stylesheet" type="text/css">
+<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>3ª Aula Teórico-Prática</h4>
+
+A gestão de sessões refere-se à forma como a informação é associada ao
+	utilizador quando este procede a uma visita a uma determinada página
+	<em>web</em>, sendo especialmente útil em aplicações de comércio eletrónico.
+	Por exemplo, um determinado utilizador efetua a autenticação na sua conta
+	pessoal, escolhe os artigos que deseja comprar, adiciona-os ao carrinho de
+	compras, escolhe o método de pagamento, confirma, e depois fecha o <em>browser
+	web</em>. Este processo, desde que entrou na loja até que fechou o
+	<em>browser</em>, corresponde a uma sessão.
+	
+	<!-- , e todos os dados correspondentes
+	são partilhados como variáveis de uma sessão PHP. -->
+	
+	<!-- ====================================================================== -->
+	
+	<a name="armazenamento_sessao"></a>
+Pode-se guardar informação de estado sobre as sessões dos utilizadores
+	colocando dados no cliente - em <code>cookie</code>s no <em>browser</em> (
+		<a href="http://www.w3schools.com/php/php_cookies.asp">Ajuda1</a>,
+		<a href="http://www.w3schools.com/js/js_cookies.asp">Ajuda2</a>) ou
+	armazenando dados no servidor <em>Web</em> (
+		<a href="http://www.w3schools.com/php/php_sessions.asp">Ajuda3</a>).<p></p>
+	
+
+<h5>Sumário</h5>
+
+Vamos realizar alguns exercícios sobre os seguintes assuntos:
+
+<ol type="I">
+	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP03Dados-Web.html?time=1647875342903#cookies-php">Dados no cliente - <code>cookie</code>s em PHP</a></li>
+	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP03Dados-Web.html?time=1647875342903#sessions-php">Dados no servidor - identificadores <code>session</code> em PHP</a></li>
+	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP03Dados-Web.html?time=1647875342903#session-colours">Dados no servidor - registo de preferências de uma sessão </a>
+  	</li></ol>
+
+
+<!-- ====================================================================== -->
+
+<ol type="I">
+
+
+
+<li><h5 id="cookies-php"> Dados no cliente - <code>cookie</code>s em PHP</h5>
+
+
+As <code>cookie</code>s são variáveis que ficam guardadas no <em>browser</em> logo após terem sido enviadas pelo servidor <em>Web</em> aquando do primeiro
+acesso a uma página. Estas <code>cookie</code>s são depois automaticamente
+transmitidas pelo <em>browser</em> em futuros pedidos a esse servidor
+<em>Web</em>, podendo o seu valor ser consultado através da expressão
+<code>$_COOKIE["nome_da_cookie"]</code>.
+<br>
+As <code>cookie</code>s podem ser configuradas de tal forma que expirem numa
+determinada data ou hora e que o seu envio seja restringido a um servidor
+<em>Web</em> ou mesmo a diretorias específicas deste. No exemplo seguinte é
+criada uma <code>cookie</code> chamada <strong>MMMMM</strong> (o seu número de aluno) cujo valor é
+<code>aswNN</code> (o seu grupo), e cuja validade é de apenas uma hora, ou seja 3600
+segundos (por omissão a <code>cookie</code> é associada ao servidor <em>Web</em> e
+à diretoria do próprio <em>script</em> PHP)
+ (<a href="http://www.w3schools.com/php/php_cookies.asp">Ajuda1</a>).
+ <br>
+ O armazenamento da Web em HTML5 fornece dois objetos para armazenar dados no cliente que podem substituir o uso das <code>cookie</code>s com algumas vantagens.
+ Veremos o seu uso numa TP com mais contexto (uso do JSON):
+ <code>window.localStorage</code> - armazena dados sem data de expiração;
+	<code>window.sessionStorage</code> - armazena dados para uma sessão, mas os dados são perdidos quando o navegador é fechado.
+
+<br>
+<br>
+
+	<ol>
+
+ <li> Crie uma diretoria tp03 só para esta aula:
+	$ mkdir ~/public_html/MMMMM/tp03
+
+</li><br><li>Crie nesta diretoria uma página <code>porbolinho.php</code>
+<xmp>
+<?php
+	setcookie("MMMMM", "aswNN", time() + 3600);
+?>
+</xmp>
+</li><br><li>
+Teste chamando o ficheiro anterior via HTTP
+e verificando a sua existência no browser (depende do browser utilizado).
+</li><br><li>
+Verifique agora através do uso do ficheiro <code>verbolinho.php</code>
+
+<xmp>
+<?php
+$nomebolinho = "MMMMM";
+if(!isset($_COOKIE[$nomebolinho])) {
+    echo "Não existe " . $nomebolinho;
+} else {
+    echo $nomebolinho . "existe!<br>";
+    echo "O seu valor é " . $_COOKIE[$nomebolinho];
+}
+?>
+</xmp>
+</li><br><li>
+Para actualizar uma <code>cookie</code>, por exemplo mudar o "MMMMM" para "semGrupo",
+ basta chamar novamente a função <code>setcookie</code>:<p></p>
+
+<xmp>
+<?php
+	setcookie("MMMMM", "semGrupo", time() - 3600);
+?>
+</xmp>
+</li><br><li>Execute de novo o ficheiro <code>verbolinho.php</code>
+</li><br><li>
+<p>Para apagar uma  <code>cookie</code> basta actualizá-la com uma data que já expirou:</p>
+
+<xmp>
+<?php
+	setcookie("MMMMM", "", time() - 3600);
+?>
+</xmp>
+</li><br><li>Execute de novo o ficheiro <code>verbolinho.php</code>
+	para testar a inexistência deste <code>cookie</code>.
+</li><br><li>
+	Como são guardados no browser, os <code>cookie</code>s podem também ser acedidos,
+	criados, actualizados e apagados via <em>Javascript</em>
+	através da propriedade
+	<code>document.cookie </code>
+	(<a href="http://www.w3schools.com/js/js_cookies.asp">Ajuda2</a>).
+	No exemplo seguinte, o cookie "utilizador" é criado com o valor "asw333"
+	e com data de expiração no dia 23 de Março de 2022:
+<xmp>
+<script>
+  document.cookie=
+  	"utilizador=asw333; expires=Wed, 23 Mar 2022 12:00:00 UTC";
+</script>
+</xmp>
+Crie um ficheiro com o conteúdo anterior de nome  <code>porbolinho.html</code>.
+</li><br><li>
+	Altere o ficheiro <code>verbolinho.php</code> de modo a consultar este novo <code>cookie</code>.
+
+</li></ol>
+<br>
+Algumas limitações inerentes às <code>cookie</code>s são:
+	<ul>
+		<li>o <em>browser</em> só
+poder guardar até cerca de 20 <code>cookie</code>s por cada servidor <em>Web</em>;</li><li>
+cada <code>cookie</code> não poder ter mais de 4 KBytes;</li><li>
+a possibilidade de os utilizadores poderem desativar as <code>cookie</code>s nos seus
+<em>browsers</em><div class=""></div></li></ul>
+
+
+
+
+<!-- = = = = = = = = = = = = = = = = = =  = = = = = = = = = = = = = = = = = -->
+
+</li><li><h5 id="sessions-php">Dados no servidor - identificadores <code>session</code> em PHP</h5>
+	<ol>
+
+A linguagem PHP tem suporte nativo para a gestão de sessões de utilizadores,
+	que permite, de uma forma simples e eficaz, ultrapassar a limitação típica dos
+	servidores <em>Web</em> de, por si mesmos, não conseguirem reconhecer
+	utilizadores a partir dos pedidos HTTP (<em>HyperText Transfer Protocol</em>)
+	que estes fazem com os seus <em>browsers</em>.<p></p><p>A utilidade das sessões PHP decorre do facto do protocolo HTTP não possuir
+	um mecanismo que permita manter estado, isto é, que reconheça automaticamente
+	um utilizador que já tenha consultado alguma página do servidor <em>Web</em>;
+	de igual forma, o servidor não consegue perceber que vários pedidos podem ser
+	originários de utilizadores diferentes, apesar de serem oriundos do mesmo
+	computador. O servidor <em>Web</em>
+	pode guardar o estado de uma sessão em forma de
+múltiplas variáveis, ficando guardado no <em>browser</em> apenas o
+identificador da sessão, ou <em>session id</em>. Desta forma consegue-se
+ultrapassar o limite de cerca de 20 <code>cookie</code>s por cada servidor
+<em>Web</em>, sendo que o <em>session id</em> permite aceder às variáveis
+associadas à sessão.</p><p>A função <code>session_start()</code>
+	é usada para criar uma nova sessão ou
+para identificar uma sessão já estabelecida. Quando um <em>script</em> chama
+<code>session_start()</code> pela primeira vez é gerado automaticamente um
+<em>session id</em>. Por omissão, esse identificador é enviado para o
+<em>browser</em> do utilizador em forma de <code>cookie</code> com nome
+<code>PHPSESSID</code>. Depois de executado <code>session_start()</code>,
+pode-se guardar ou aceder a variáveis de sessão:
+
+</p><xmp>
+	$_SESSION["equipa"] = "Sporting";
+</xmp>
+
+Neste exemplo, <code>equipa</code> é uma variável de sessão que fica
+guardada no servidor <em>Web</em> com o valor <code>Sporting</code>. Uma vez
+registadas, as variáveis ficam disponíveis para todos os <em>scripts</em> que
+chamem <code>session_start()</code>. Se for necessário eliminar todo o estado de uma sessão usa-se
+<code>session_destroy()</code>, sendo mais comum remover uma variável
+específica da seguinte forma:
+
+<xmp>
+	unset($_SESSION["equipa"]);
+</xmp>
+
+Se o <em>browser</em> desativar <code>cookie</code>s, situação detetável com
+<code>isset($_COOKIE["PHPSESSID"])</code>, o identificador da sessão deve ser
+incluído, via método GET, nos endereços dos pedidos que o utilizador poderá
+fazer a partir da página que está a ser gerada, por exemplo da seguinte
+forma:
+
+
+<xmp>
+	$endereço_pedido = "pedido.php" . "?PHPSESSID=" . session_id();
+</xmp>
+
+<!-- ====================================================================== -->
+
+São apresentados de seguida alguns exercícios de utilização da funcionalidade de gestão de sessões do PHP.<p></p>
+
+<!-- = = = = = = = = = = = = = = = = = =  = = = = = = = = = = = = = = = = = --><h5>&nbsp;</h5><p>
+</p><li>Guarde o programa seguinte no ficheiro <code>cria_sessao.php</code> dentro a
+diretoria <code>public_html/MMMMM/tp03/sessoes</code> e ajuste as permissões de acesso. Para o executar aponte o
+<em>browser</em> para o endereço
+
+<blockquote>
+	<p><code>
+	<a href="http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp03/sessoes/cria_sessao.php">
+		http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp03/sessoes/cria_sessao.php</a></code>,
+	</p>
+	<p>onde <code>NN</code> representa o número do seu grupo.</p>
+</blockquote>
+
+<xmp>
+	
+<?php
+
+// ============================================================================
+// <b>Programa 1</b> - cria_sessao.php (cria uma nova sessão)
+//            - Guardar em public_html/MMMMM/tp03/sessoes/
+// ============================================================================
+
+// Cria uma nova sessão, assumindo que é a primeira visita a este servidor Web.
+session_start();
+
+// O estado da sessão é composto apenas pela variável
+// 'desde' que guarda a data em que a sessão foi criada.
+if (!isset($_SESSION["desde"])) {
+  $_SESSION["desde"] = date("d.m.Y G:i");
+}
+
+// ============================================================================
+
+?>
+</xmp>
+
+O que este programa faz é iniciar o ambiente de sessões, declarar uma
+variável de estado, chamada <code>desde</code>, e registá-la na sessão atual.
+Isto significa que, mesmo que o utilizador mude de página no mesmo servidor
+<em>Web</em>, é possível obter o valor da variável registado na sessão. Para
+verificar isso, guarde o programa seguinte no ficheiro
+<code>usa_sessao.php</code> e execute-o:
+
+<xmp>
+
+<?php
+
+// ============================================================================
+// <b>Programa 2</b> - usa_sessao.php (recupera o estado de uma sessão já criada)
+//            - Guardar em public_html/MMMMM/tp03/sessoes/
+// ============================================================================
+
+// Resposta é um documento de texto simples.
+header("Content-Type: text/plain");
+
+// Recupera o estado da sessão, assumindo que já tinha sido criada.
+session_start();
+
+printf("A sessão com ID '%s' foi criada ", session_id());
+
+if (isset($_SESSION["desde"])) {
+  printf("na seguinte data: %s", $_SESSION["desde"]);
+} else {
+  printf("nesta página.");
+}
+
+// ============================================================================
+
+?></xmp><p>Neste segundo programa, depois de inicializada a sessão, a variável
+registada na sessão passa a estar disponível e o seu valor é impresso.</p>
+<h5>&nbsp;</h5><p>
+
+	</p></li><li>O próximo programa recorre à funcionalidade de sessões do PHP para ir
+registando o número de acessos que um utilizador num determinado
+<em>browser</em> faz a um mesmo servidor <em>Web</em>. Guarde o programa no
+ficheiro <code>contador_acessos.php</code> e execute-o várias vezes seguidas,
+simulando vários acessos. Verifique que ao fechar o browser o contador é reiniciado.<p></p>
+
+
+<xmp><?php
+// ============================================================================
+// <b>Programa 3</b> - contador_acessos.php (conta o número de acessos do utilizador)
+//            - Guardar em public_html/MMMMM/tp03/sessoes/
+// ============================================================================
+
+// Resposta é um documento de texto simples.
+header("Content-Type: text/plain");
+
+// Cria ou recupera uma sessão.
+session_start();
+
+// O estado da sessão passa a incluir um contador de acessos.
+if (!isset($_SESSION["contador"])) {
+  $_SESSION["contador"] = 1;
+} else {
+  $_SESSION["contador"]++;
+}
+
+printf("Na sessão com ID '%s' o contador de acessos vai em %d.",
+       session_id(), $_SESSION["contador"]);
+
+// ============================================================================
+
+?>
+</xmp>
+
+No início, a sessão é inicializada com <code>session_start()</code>. Tal
+como antes, este método desempenha uma dupla função: a) verifica se a sessão já
+foi inicializada para o utilizador atual, recuperando-a; ou b) cria uma nova
+sessão se esta for a primeira visita do utilizador.<p></p><p>Enquanto a sessão existir, a variável de estado <code>contador</code> também
+existe. De início não possui qualquer valor, sendo necessário iniciá-la a um,
+para posteriormente poder ser incrementada. Para mostrar o número de vezes que
+a página foi acedida, basta imprimir o valor em
+<code>$_SESSION["contador"]</code>.</p><p>Se a sessão for destruída com <code>session_destroy()</code> ou se a
+variável de sessão for removida com <code>unset($_SESSION["contador"])</code>,
+o valor do contador vai voltar a um no acesso seguinte.
+
+<!-- = = = = = = = = = = = = = = = = = =  = = = = = = = = = = = = = = = = = -->
+
+</p></li><br><li>
+
+Copie a página actual de entrada do site do seu projeto de grupo:
+	<xmp>
+		$ cp -r ~/public_htm/projeto/entrada.html ~/public_htm/MMMMM/tp03/
+	</xmp>
+
+</li><br><li>
+No canto inferior esquerdo da  página de entrada do seu site do ReFood-FCUL,
+apresente o seu número de aluno e nome,  
+seguido do número de acessos que está a realizar a este site ().
+<xmp>
+				ReFood-FCUL
+
+
+														
+MMMMM- primeiro_nome último: no._de_acessos
+</xmp>
+</li>
+
+</ol>
+
+<!-- = = = = = = = = = = = = = = = = = =  = = = = = = = = = = = = = = = = = -->
+
+
+</li><li><h5 id="session-colours"> - Dados no servidor - registo de preferências de uma sessão</h5>
+	<ol>
+	<li> Neste exercício, as variáveis de sessão são utilizadas para o registo das
+	cores preferidas do utilizador, as quais são usadas na apresentação de texto
+	nas páginas HTML do servidor <em>Web</em>. Um primeiro programa,
+	<code>formulario_cores.php</code>, permite a escolha das cores a partir de um
+	formulário HTML, as quais são depois registadas na sessão por um segundo
+	programa, <code>regista_cores.php</code>.<p></p>
+	
+	<xmp>
+		<?php
+	
+	// ============================================================================
+	// <b>Programa 4</b> - formulario_cores.php (escolha de cores pelo utilizador)
+	//            - Guardar em public_html/sessoes/
+	// ============================================================================
+	
+	// Cria ou recupera a sessão com este utilizador.
+	session_start();
+	
+	// ============================================================================
+	?>
+	
+	<html>
+	<head><title>Formulário de escolha de cores</title>
+	
+	<?php
+	// ============================================================================
+	
+	// Aplica as cores se já tiverem sido escolhidas pelo utilizador.
+	if (isset($_SESSION["cor_texto"]) and isset($_SESSION["cor_fundo"])) {
+	  echo '<style type="text/css">';
+	  echo "body {";
+	  echo "color: " . $_SESSION["cor_texto"] . ";";
+	  echo "background-color: " . $_SESSION["cor_fundo"] . ";";
+	  echo "}";
+	  echo "</style>";
+	}
+	
+	// ============================================================================
+	?>
+	
+	</head>
+	
+	<body>
+	<p><b>Formulário de escolha de cores</b></p>
+	
+	<form action="regista_cores.php" method="post">
+	
+	<p>Escolha uma cor para o texto:&amp;nbsp;
+	<select name="cor_texto">
+	<option value="#0000ff">Azul</option>
+	<option value="#ffffff">Branco</option>
+	<option value="#000000" selected="selected">Preto</option>
+	<option value="#00ff00">Verde</option>
+	<option value="#ff0000">Vermelho</option>
+	</select>
+	</p>
+	
+	<p>Escolha uma cor para o fundo:&amp;nbsp;
+	<select name="cor_fundo">
+	<option value="#0000ff">Azul</option>
+	<option value="#ffffff" selected="selected">Branco</option>
+	<option value="#000000">Preto</option>
+	<option value="#00ff00">Verde</option>
+	<option value="#ff0000">Vermelho</option>
+	</select>
+	</p>
+	
+	<input type="submit" value="Registar cores na sessão"/>
+	
+	</form>
+	
+	</body>
+	</html>
+	
+	<?php
+	// ============================================================================
+	?></xmp><p>No programa <code>formulario_cores.php</code>, a sessão é inicializada e é
+	verificada a existência das variáveis de sessão <code>cor_texto</code> e
+	<code>cor_fundo</code>, significando, em caso afirmativo, que o utilizador já
+	havia registado as suas cores preferidas, sendo ajustadas as cores na própria
+	página do formulário.. A receção
+	das novas cores favoritas para registo na sessão é feita através do método
+	POST, como mostrado a seguir:</p><xmp><?php
+	
+	// ============================================================================
+	// <b>Programa 5</b> - regista_cores.php (registo das cores preferidas do utilizador)
+	//            - Guardar em public_html/sessoes/
+	// ============================================================================
+	
+	// Cria ou recupera a sessão onde são guardadas as cores.
+	session_start();
+	
+	// Guarda as cores escolhidas pelo utilizador na sessão.
+	$_SESSION["cor_texto"] =
+	  isset($_POST["cor_texto"]) ? $_POST["cor_texto"] : "#000000";
+	
+	$_SESSION["cor_fundo"] =
+	  isset($_POST["cor_fundo"]) ? $_POST["cor_fundo"] : "#ffffff";
+	
+	// ============================================================================
+	
+	echo "<html>";
+	echo "<head><title>Registo de cores na sessão</title>";
+	
+	// ============================================================================
+	
+	// Aplica nesta mesma página as cores escolhidas pelo utilizador.
+	if (isset($_SESSION["cor_texto"]) and isset($_SESSION["cor_fundo"])) {
+	  echo '<style type="text/css">';
+	  echo "body {";
+	  echo "color: " . $_SESSION["cor_texto"] . ";";
+	  echo "background-color: " . $_SESSION["cor_fundo"] . ";";
+	  echo "}";
+	  echo "</style>";
+	}
+	
+	// ============================================================================
+	
+	echo "</head>";
+	echo "<body>";
+	
+	echo "<p>As cores foram registadas na sessão com ID '" .
+		 session_id() . "'.</p>";
+	
+	echo '<p>Voltar ao <a href="formulario_cores.php">formulário ' .
+		 'de escolha de cores</a>.</p>';
+	
+	echo "</body>";
+	echo "</html>";
+	
+	// ============================================================================
+	
+	?>
+	</xmp>
+	
+	<p>Depois de registadas as cores na sessão, o programa permite o regresso à
+	página com o formulário de escolha das cores favoritas.</p>
+	
+	</li><li>Verifique o funcionamento destes scripts introduzindo no browser o endereço: <p></p>
+	<blockquote>
+	   <p><code><a href="http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp03/formulario_cores.php">
+					   http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp03/formulario_cores.php</a></code></p>
+	</blockquote>
+	
+	
+	
+	
+	
+	</li><li>	Na cópia anteriormente criada do projeto, para esta TP,
+			crie um botão de configuração no canto inferior direito da página de entrada do site, que permita registar no servidor a configuração de cores
+	preferida de cada utilizador.
+
+
+	<xmp>
+				ReFood-FCUL
+
+
+
+MMMMM- primeiro_nome último: no._de_acessos	Configurar_cores
+</xmp>
+	</li>
+	
+	<li> A partir das consultas à base de dados criadas na tp02, permita
+	ao utilizador do ReFood-FCUL registar e consultar a sua lista de instituições preferidas - registadas apenas na sessão e não na base de dados.
+
+	</li>
+	
+	
+	</ol>
+	
+	
+	<!-- = = = = = = = = = = = = = = = = = =  = = = = = = = = = = = = = = = = = -->
+	
+
+
+</li><li><h5 id="biblio">Bibliografia</h5>
+	<ul>
+		<li><a href="http://www.php.net/manual/en/">PHP Manual</a></li>
+		<li>PHP Tutorial
+			(<a&#010; href="http://www.webmonkey.com/2010/02/php_tutorial_for_beginners/">
+			<a href="http://w3schools.com/php">W3 Schools</a>)</a&#010;></li>  
+	</ul>
+
+</li></ol>
+
+</body></html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<voluntarios>
+    <voluntario NIF="123456789">
+        <nome>Bruno</nome>
+        <telefone>987654321</telefone>
+        <morada>
+            <endereco>R. Combatentes da Grande Guerra, 1</endereco>
+            <codigo-postal>1234-123</codigo-postal>
+            <cidade>Arrazadela</cidade>
+            <distrito>Porto</distrito>
+        </morada>
+    </voluntario>
+    <!-- comentário -->
+    <voluntario NIF="123456790">
+        <nome>Francisco</nome>
+        <telefone>987654322</telefone>
+        <morada>
+            <endereco>R. Combatentes da Grande Guerra, 2</endereco>
+            <codigo-postal>1235-124</codigo-postal>
+            <cidade>Carcozelo</cidade>
+            <distrito>Lisboa</distrito>
+        </morada>
+    </voluntario>
+    <voluntario NIF="123456791">
+        <nome>Matilde</nome>
+        <telefone>987654323</telefone>
+        <morada>
+            <endereco>R. Combatentes da Grande Guerra, 3</endereco>
+            <codigo-postal>1236-125</codigo-postal>
+            <cidade>Tapapelo</cidade>
+            <distrito>Faro</distrito>
+        </morada>
+    </voluntario>
+    <voluntario NIF="123456797">
+        <nome>Tiago</nome>
+        <telefone>987654323</telefone>
+        <morada>
+            <endereco>R. Combatentes da Grande Guerra, 4</endereco>
+            <codigo-postal>1236-125</codigo-postal>
+            <cidade>Amadora</cidade>
+            <distrito>Sintra</distrito>
+        </morada>
+    </voluntario>
+</voluntarios>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<!-- saved from url=(0099)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP07-AJAX.html -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+	<meta name="revised" content="2 de Abril, 2019">
+		<meta name="revised" content="8 de Abril, 2020">
+    <meta name="revised" content="3 de Abril, 2021">
+	<meta name="revised" content="8 de Abril, 2022">
+  <!-- para o ano deviam de fazer estes exercícios sobre a página de entrada do projecto
+    - no caso do AJAX é muito relevante, uma vez que podem incluir dados numa página que já deve ter muito conteíudo e
+    que, por isso, não deve ser recarregada na alteração.-->
+	<title>AJAX/PHP - ASW 2021/22</title>
+	<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>7ª Aula Teórico-Prática - AJAX/PHP</h4>
+
+O AJAX (acrónimo de Asynchronous Javascript and XML), é uma tecnologia Javascript
+para tornar páginas Web mais interativas, permitindo pedidos de dados assíncronos. <br>
+Apesar do nome, a utilização de XML não é obrigatória (o JSON é frequentemente utilizado) e os pedidos também não necessitam ser assíncronos.<br><br>
+
+O XMLHttpRequest (XHR) é uma API disponível em linguagens de script para navegadores web tais como o JavaScript.<br>
+É utilizada para enviar pedidos HTTP ou HTTPS diretamente para um servidor web e carregar os dados de resposta do servidor, diretamente de volta ao script.<br>
+Apesar do nome XMLHttpRequest, os dados podem ser recebidos do servidor através de JSON, XML, HTML, ou como texto puro.<br>
+Os dados da resposta podem ser usados diretamente para alterar o DOM do documento atual, ativo na janela do navegador, sem carregar uma nova página.<br>
+Os dados de resposta podem também ser alterados pelo script do lado cliente.<br>
+Por exemplo, dados formatados como JSON pelo servidor web, podem ser facilmente convertidos em objeto de dados do lado cliente, para uso posterior.<br>
+<br>
+
+XMLHttpRequest é um objeto Javascript que torna possível a comunicação assíncrona com o servidor,
+sem a necessidade de recarregar a página por completo.<br>
+
+O objeto XMLHttpRequest é hoje parte da especificação do DOM, nível 3.<br><br>
+
+
+Na aula anterior criou-se uma página web para ler e apresentar o conteúdo de um ficheiro de forma síncrona com a execução normal do javascript
+- TP06-II.2 e 3, já nessa altura altura estava a usar mecanismos da ferramenta AJAX.<br><br>
+
+Nesta aula vamos imaginar que esse ficheiro é muito grande, demorando assim muito tempo a ler.
+Pretende-se que o resto da página possa ser apresentada quanto antes, antes da leitura do ficheiro estar concluída
+- sendo esta efectuada de forma assíncrona, num processo paralelo. <br>
+
+
+
+<br><br>Atenção: tem de alterar todos os cabeçalhos <code>h2</code> nos códigos a serem implementados, por forma a apresentarem o seu número de aluno e nome
+<xmp>
+  <h2>MMMMM - primeiro_nome último_nome</h2>
+</xmp>
+<br>
+
+<h4>Guião da aula</h4>
+  <ol type="I">
+ 
+    <li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP07-AJAX.html#AJAX">Uso - AJAX</a></li>
+    <li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP07-AJAX.html#AJAX-jQuery">Uso de jQuery - AJAX</a></li>
+    <li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP07-AJAX.html#AJAX-apoia">Apoio à procura - AJAX</a></li>
+    
+  </ol><hr>
+
+
+  <ol type="I"> 
+    
+ 
+<a name="AJAX"></a>
+<li><h5>Uso de AJAX</h5>
+	<ol>
+<li>
+  Reutilize na sua nova directoria <code>~/public_html/MMMMMM/tp07</code> o ficheiro <code>voluntarios.xml</code> em XML com os elementos do seu grupo como voluntarios, criado na aula anterior em TP06-II.2.<br>
+
+ </li><li> Crie na mesma directoria a página web <code>depoisDespejaVoluntarios.html</code> com um botão que uma vez selecionado permite,
+  usando AJAX, apresentar todos os voluntários - caso já esteja concluída a leitura do respectivo ficheiro.
+
+
+
+<xmp>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+   <title>Voluntários</title>
+</head>
+<body>
+
+<h1>Obter um ficheiro XML do servidor</h1>
+
+<h2>The XMLHttpRequest Object</h2>
+<button type="button" onclick="escreve_nomes()">Click aqui para alterar o conteúdo desta página</button>
+
+<div id="demo">
+</div>
+<script>
+
+var xhttp=new XMLHttpRequest();
+
+function escreve_nomes() {
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+				document.getElementById("demo").innerHTML = this.responseText;
+		}
+	};
+
+	xhttp.open("GET","voluntarios.xml",true);
+	
+	xhttp.send();
+	}
+</script>
+</body>
+</html>
+</xmp>
+
+Repare que:
+<ol type="a">
+	<li>a abertura da conexão <code>xhttp.open("GET","voluntarios.xml",true);</code> é feita com a indicação para ser assíncrona <code>true</code>;
+  </li><li>o envio desse conteúdo é depois efectuado de acordo com essa indicação, de forma assíncrona;
+	</li><li>a função <code>escreve_nomes</code> é executada quando se pressiona o botão e
+  </li><li>a função <code>onreadystatechange</code> escreve depois o resultado.
+</li></ol>
+<p></p>
+</li><li> Modificação do exercício anterior para que o resultado fique numa lista numerada dentro de
+um elemento <code>div</code>. Utilize o seguinte código no ficheiro <code>depoisListaVoluntarios.html</code>
+
+<xmp>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Voluntários</title>
+</head>
+<body>
+<h1>Obter um ficheiro XML do servidor</h1>
+<h2>The XMLHttpRequest Object</h2>
+<button type="button" onclick="loadDoc()">Click aqui para alterar o conteúdo desta página</button>
+
+<div id="demo"></div>
+
+<script>
+function loadDoc() {
+	var xhttp=new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function()
+	{
+		if (this.readyState == 4 && this.status == 200)
+		{
+			var papeis=xhttp.responseXML;
+
+			var voluntarios=papeis.getElementsByTagName("nome");
+			var htmlresult="<ol>";
+			for (i=0;i<voluntarios.length;i++)
+			{
+				htmlresult=htmlresult+"<li>";	
+				htmlresult=htmlresult+voluntarios[i].childNodes[0].textContent;
+				htmlresult=htmlresult+"</li>";	
+			}
+			document.getElementById("demo").innerHTML = htmlresult;
+		}
+	};
+
+	xhttp.open("GET","voluntarios.xml",true);
+	
+	xhttp.send();
+}
+</script>
+</body>
+</html>
+</xmp>
+</li>
+</ol>
+
+
+
+
+<a name="AJAX-jQuery"></a>
+
+  </li><li><h5>Uso de jQuery - AJAX</h5>
+
+    Nesta secção vamos refazer o código anterior usando jQuery. O código fica algo mais declarativo e mais simples de ler.<br>
+    <br>
+  <ol>
+    <li>Para o teste da versão síncrona, crie e teste o ficheiro <code>Voluntarios-jQuery-sync-get.html</code> 
+
+<xmp>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Voluntários</title>
+    </head>
+    <body>
+      <h1>Obter um ficheiro XML do servidor - jQuery sincrono/GET</h1>
+      <h2>The XMLHttpRequest Object</h2>
+     
+      <div id="demo"></div>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+      <script type="text/javascript">
+        $(document).ready(function () {
+          var htmlresult="<ol>";
+          $.ajax({
+            async: false,
+            type: "GET",
+            url: "voluntarios.xml",
+            cache: false,
+            dataType: "xml",
+            success: function(xml) {
+              $(xml).find('voluntario').each(function(){
+                htmlresult=htmlresult+"<li>";
+                htmlresult=htmlresult+$(this).find("nome").text();
+                htmlresult=htmlresult+"</li>";
+              });
+              htmlresult=htmlresult+"</ol>";
+              document.getElementById("demo").innerHTML = htmlresult;
+            }
+          });
+        });
+      </script>
+    </body>
+  </html>
+</xmp>
+
+  </li><li>Para o teste da versão assíncrona, crie e teste o ficheiro  <code>Voluntarios-jQuery-Async-post.html</code> 
+
+<xmp>
+  <!DOCTYPE html>
+    <html>
+      <head>
+      <meta charset="utf-8">
+      <title>Voluntários</title>
+      </head>
+      <body>
+        <h1>Obter um ficheiro XML do servidor - jQuery assincrono/PUT</h1>
+        <h2>The XMLHttpRequest Object</h2>
+    
+        <div id="demo"></div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+          $(document).ready(function () {
+          var htmlresult="<ol>";
+          $.ajax({
+            async: true,
+            type: "POST",
+            url: "voluntarios.xml",
+            cache: true,
+            dataType: "xml",
+            success: function(xml) {
+              $(xml).find('voluntario').each(function(){
+                htmlresult=htmlresult+"<li>";
+                htmlresult=htmlresult+$(this).find("nome").text()+" da cidade de "+$(this).find("cidade").text();
+                htmlresult=htmlresult+"</li>";
+              });
+              htmlresult=htmlresult+"</ol>";
+              document.getElementById("demo").innerHTML = htmlresult;
+            }
+          });
+        });
+        </script>
+    </body>
+  </html>
+</xmp>
+
+    Repare que em jQuery a mudança para a versão assincrona, se resume a introduzir "<code>async: true,</code>".
+
+  </li>
+</ol>
+
+
+
+
+<a name="AJAX-apoia"></a>
+
+  </li><li><h5>Apoio à procura - AJAX</h5>
+    O exemplo seguinte demonstra como uma página da Web pode comunicar com
+    um servidor Web enquanto um utilizador digita caracteres no campo de entrada.
+<br><br><br>
+  <ol>
+
+
+    <li>Crie o seguinte ficheiro PHP no servidor com o nome <strong>girls.php</strong>.
+    Este ficheiro recebe como parâmetro uma <strong>string</strong> <strong>q</strong>.
+Compara este parâmetro com o conteúdo do array <strong>a</strong>  para sugerir nomes de mulheres em inglês.
+    
+    <xmp>
+    <?php
+    // Array with names
+    $a[] = "Anna";
+    $a[] = "Brittany";
+    $a[] = "Cinderella";
+    $a[] = "Diana";
+    $a[] = "Eva";
+    $a[] = "Fiona";
+    $a[] = "Gunda";
+    $a[] = "Hege";
+    $a[] = "Inga";
+    $a[] = "Johanna";
+    $a[] = "Kitty";
+    $a[] = "Linda";
+    $a[] = "Nina";
+    $a[] = "Ophelia";
+    $a[] = "Petunia";
+    $a[] = "Amanda";
+    $a[] = "Raquel";
+    $a[] = "Cindy";
+    $a[] = "Doris";
+    $a[] = "Eve";
+    $a[] = "Evita";
+    $a[] = "Sunniva";
+    $a[] = "Tove";
+    $a[] = "Unni";
+    $a[] = "Violet";
+    $a[] = "Liza";
+    $a[] = "Elizabeth";
+    $a[] = "Ellen";
+    $a[] = "Wenche";
+    $a[] = "Vicky";
+    
+    // get the q parameter from URL
+    $q = $_REQUEST["q"];
+    
+    $hint = "";
+    
+    // lookup all hints from array if $q is different from "" 
+    if ($q !== "") {
+        $q = strtolower($q);
+        $len=strlen($q);
+        foreach($a as $name) {
+            if (stristr($q, substr($name, 0, $len))) {
+                if ($hint === "") {
+                    $hint = $name;
+                } else {
+                    $hint .= ", $name";
+                }
+            }
+        }
+    }
+    
+    // Output "no suggestion" if no hint was found or output correct values 
+    echo $hint === "" ? "no suggestion" : $hint;
+    ?>
+  
+    </xmp>
+  </li><li>Teste o ficheiro anterior com <strong>http://appserver-01.alunos.di.fc.ul.pt/~asw0NN/MMMMM/tp07/girls.php?q=a</strong></li>
+<br><br>
+<li>Crie o ficheiro <strong>girls.html</strong> seguinte que solicita o ficheiro <strong>girls.php</strong>.</li>
+  <xmp>
+  <!DOCTYPE html>
+<html lang="pt">
+  <head></head>
+<body>
+  <h2>The XMLHttpRequest Object</h2>
+<h3>
+Comece a escrever um nome de mulher em inglês - são alguns nomes estão registados para serem completados</h3>
+<form action="">
+ 
+First name: <input type="text" id="txt1" onkeyup="showHint(this.value)">
+</form>
+<p>
+Suggestions: <span id="txtHint"></span></p> 
+<script>
+  function showHint(str) {
+  var xhttp;
+  if (str.length == 0) { 
+    document.getElementById("txtHint").innerHTML = "";
+    return;
+  }
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("txtHint").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "girls.php?q="+str, true);
+  xhttp.send();   
+}
+</script>
+</body>
+</html>
+</xmp>
+<li>Teste o ficheiro HTML anterior.</li>
+<br><br>
+<li> Utilize agora os seguintes ficheiros PHP para obter o mesmo efeito do exercício anterior, mas no seu projeto, acedendo aos conteúdos da sua base de dados.<br>
+  Coloque o ficheiro PHP no servidor com o nome <strong>DB-access.php</strong>.
+
+<xmp>
+<?php
+// get the q parameter from URL
+$q = $_REQUEST["q"];
+$dbhost = "appserver-01.alunos.di.fc.ul.pt";
+$dbuser = "asw0NN";
+$dbpass = "A VOSSA PASSWORD";
+$dbname = "asw0NN";
+
+$conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+if (mysqli_connect_error()) {
+die("Database connection failed:".mysqli_connect_error());
+}
+
+$prods="";
+$sql = "SELECT NIF,Nome FROM Voluntario";
+$result=mysqli_query($conn, $sql);
+	while ($row = mysqli_fetch_assoc($result)) {
+			$a[]=$row["Nome"];
+		}
+		
+mysqli_close($conn);
+$hint = "";
+// lookup all hints from array if $q is different from "" 
+if ($q !== "") {
+    $q = strtolower($q);
+    $len=strlen($q);
+    foreach($a as $name) {
+        if (stristr($q, substr($name, 0, $len))) {
+            if ($hint === "") {
+                $hint = $name;
+            } else {
+                $hint .= ", $name";
+            }
+        }
+    }
+}
+// Output "no suggestion" if no hint was found or output correct values 
+echo $hint === "" ? "no suggestion" : $hint;
+?>
+</xmp>
+</li><li>Teste o ficheiro anterior com <strong>http://appserver-01.alunos.di.fc.ul.pt/~asw0NN/MMMMM/tp07/DB-access.php?q=m</strong>.
+
+</li>
+<br><br>
+<li>Coloque o ficheiro HTML <code>procuraVoluntário.html</code> no servidor. 
+<br>Assegure-se de que o seu nome está registado na base de dados como voluntário, de forma a que possa aparecer quando procurado.
+  <xmp>
+<!DOCTYPE html>
+<html lang="pt">
+  <head></head>
+<body>
+  <h1>Acesso à BD de voluntários</h1>
+  <h2>The XMLHttpRequest Object</h2>
+<h3>
+Comece a escrever um nome de um voluntário na BD - só os nomes registados serão completados</h3>
+<form action="">
+ 
+Nome: <input type="text" id="txt1" onkeyup="showHint(this.value)">
+</form>
+<p>
+Sugestões: <span id="txtHint"></span></p> 
+<script>
+  function showHint(str) {
+  var xhttp;
+  if (str.length == 0) { 
+    document.getElementById("txtHint").innerHTML = "";
+    return;
+  }
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("txtHint").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "DB-access.php?q="+str, true);
+  xhttp.send();   
+}
+</script>
+</body>
+</html>
+</xmp>
+</li><li>Teste o ficheiro HTML anterior.</li>
+</ol>
+</li>
+
+
+
+
+
+<li> <h5 id="biblio">Bibliografia</h5>
+	<ul>
+		<li><a href="https://www.w3schools.com/js/js_ajax_intro.asp">Tutorial de AJAX</a></li>
+		<li><a href="https://www.w3schools.com/jquery/jquery_ajax_intro.asp">Tutorial de jQuery/AJAX</a></li>
+    	</ul>
+    </li>
+    </ol>
+
+</body></html>

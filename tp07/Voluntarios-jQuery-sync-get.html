@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Voluntários</title>
+</head>
+<body>
+<h1>Obter um ficheiro XML do servidor - jQuery sincrono/GET</h1>
+<h2>The XMLHttpRequest Object</h2>
+
+<div id="demo"></div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        let htmlresult = "<ol>";
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: "voluntarios.xml",
+            cache: false,
+            dataType: "xml",
+            success: function (xml) {
+                $(xml)
+                    .find('voluntario')
+                    .each(function () {
+                        htmlresult += `<li>${$(this).find("nome").text()}</li>`;
+                    });
+                htmlresult = htmlresult + "</ol>";
+                document.getElementById("demo").innerHTML = htmlresult;
+            }
+        });
+    });
+</script>
+</body>
+</html>

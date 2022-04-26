@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<!-- saved from url=(0125)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP04Autenticacao.html?time=1648547804310 -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="author" content="Emanuel Santos">
+<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+<meta name="revised" content="15 de março, 2020">
+<meta name="revised" content="28 de fevereiro, 2021">
+<meta name="revised" content="21 de março, 2022">
+<title>Aula de Laboratório sobre Aplicações na Web - 2021/2022</title>
+<link href="./enunciado_files/css" rel="stylesheet" type="text/css">
+<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>4ª Aula Teórico-Prática</h4>
+
+
+Esta aula é dedicada ao desenvolvimento de mecanismos de autenticação de utilizadores.
+O objetivo desta aula é realizar um conjunto de exercícios de introdução aos mecanismos de autenticação na Web para controle de acessos.
+
+<h5>Sumário</h5>
+<ol type="I">
+	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP04Autenticacao.html?time=1648547804310#htpasswd">Autenticação no servidor Apache - <em>htpasswd</em></a></li>
+  	<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP04Autenticacao.html?time=1648547804310#bd-users">Autenticação de utilizadores - registos na Base de Dados</a>
+	</li><li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP04Autenticacao.html?time=1648547804310#autentication-files"> Opcional: registo no sistema de ficheiros do SO - acesso PHP</a></li>
+</ol>
+
+
+
+
+<!-- ====================================================================== -->
+<ol type="I">
+
+ <li><h5 id="htpasswd"> Autenticação no servidor - <em>htpasswd</em></h5>
+  
+	Seguidamente vamos testar um mecanismo muito simples de autenticação no servidor, já fornecido pelo próprio servidor Apache.
+	A identificação e a senha do utilizador são registados num ficheiro local <code>.htpasswd</code> que é depois verificado pelo servidor.
+	<ol>
+
+
+	<li>	Copie a página actual de entrada do site do seu projeto de grupo (entrada.html) para uma nova directoria de nome <code>HTTP</code>:
+<xmp>
+	$ mkdir ~/public_htm/MMMMM/tp04
+	$ mkdir tp04/HTTP
+	$ cp -r ~/public_htm/projeto/entrada.html tp04/HTTP/
+	$ cd tp04/HTTP/
+</xmp>
+
+
+	
+
+	</li><li>	Verifique esta nova página no browser, no seguinte endereço: 
+   <blockquote>
+	   <p><code><a href="http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp04/HTTP/entrada.html">
+					   http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp04/HTTP/entrada.html</a></code></p>
+   </blockquote>
+
+</li><li>	Crie um ficheiro <code>.htpasswd</code> usando o comando htpasswd. Por exemplo:
+
+<xmp>
+	$ cd ~/public_html/MMMMM/tp04/HTTP
+	$ htpasswd -bc .htpasswd guest guest
+</xmp>
+<blockquote>
+	<p>(pode adicionar mais utilizadores com <code>htpasswd</code> –b)</p>
+</blockquote>
+
+</li><li>	Analise o conteúdo do ficheiro .htpasswd através do comando: <p></p>
+<xmp>cat .htpasswd</xmp>
+</li><li>	Crie um ficheiro .htaccess no directório public_html/MMMMM/tp04/HTTP com o seguinte conteúdo: <p></p>
+<xmp>	AuthType Basic
+	AuthName "Acesso Autenticado"
+	AuthUserFile /home/aswNN/public_html/MMMMM/tp04/HTTP/.htpasswd
+	Require valid-user
+</xmp>
+</li><li>Verifique se a autenticação está a funcionar, verificando de novo o endereço: <p></p>
+<blockquote>
+	<p><code><a href="http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp04/HTTP/entrada.html">
+		http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp04/HTTP/entrada.html</a></code></p>
+</blockquote>
+
+</li><li>	Elimine ou mova o ficheiro .htaccess do directório ~/public_html/MMMMM/tp04/HTTP
+<xmp>
+	$ mv .htaccess old-htaccess.htaccess
+</xmp>
+
+</li><li>Verifique que a autenticação foi retirada acedendo de novo a: <p></p>
+	<blockquote>
+		<p><code><a href="http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp04/HTTP/entrada.html">
+			http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp04/HTTP/entrada.html</a></code></p>
+	</blockquote>
+</li></ol>
+
+
+<!-- = = = = = = = = = = = = = = = = = =  = = = = = = = = = = = = = = = = = -->
+</li><li><h5 id="bd-users">Autenticação de utilizadores - registos na Base de Dados</h5>
+
+
+	Neste exercício vamos realizar a autenticação utilizando sessões e os registos em base de dados. Isto permite tirar partido
+	de algumas das inúmeras vantagens do respetivo SGBD. <br>
+	Vai fazer isto individualmente, mas de forma a poder integrar facilmente, mais tarde, na PL, com o trabalho dos seus colegas no projeto.
+
+	<ol>
+
+<li> Por esta altura deverá ter na base de dados MySQL do seu grupo, uma tabela que contenha alguns dados dos utilizadores.
+Essa tabela deve ter os atributos de contacto, e também o <code>email</code> e a <code>senha</code>.<br>
+Utilize o email como chave principal.<br>
+<!--Apenas um elemento do seu grupo deverá realizar esta alínea - verifique primeiro se não foi já realizada.-->
+
+</li><br><li>	Copie a página actual de entrada do site do seu projeto de grupo para uma nova directoria de nome <code>BD</code>:
+<xmp>
+	$ mkdir ~/public_htm/MMMMM/tp04/BD
+	$ cp -r ~/public_htm/projeto/entrada.html tp04/BD/
+	$ cd tp04/BD/
+</xmp>
+
+</li><br><li> 
+	Crie um programa em PHP <code>autenticacao.php</code> que permita  
+implementar a autenticação de utilizadores.
+
+<ol type="a">
+  <li>Em primeiro lugar verifique se o utilizador já está autenticado através de uma 
+  variável de sessão (p.e. <code>$_SESSION['utilizador']</code>). <br>
+  Se sim, deverá fazer realizar a saída (<em>logout</em> no programa <code>sair.php</code>). <br>
+  Caso contrário, é mostrado o formulário de autenticação 
+	com os campos de <code>email, senha</code> - pode usar o formulário do projeto com os restantes atributos dos utilizadores.
+  </li><li> Este formulário deverá acionar um outro programa
+  <code>processa_autenticacao.php</code> que estabelece uma ligação à BD usando um programa de ligação
+  (<code>include "abreconexao.php"</code> - ver TP02). <br> 
+	Valide se o <code>email e senha</code> coincidem com os dados registados na BD. <br>
+	Se coincidirem, guarde numa variável de sessão o nome do utilizador
+	<xmp>$_SESSION['utilizador']=$email </xmp>
+	e redirecione para uma página de registo de utilizador (<code>registo.php</code>) <br>
+	Caso contrário, deverá carregar novamente a página <code>autenticacao.php</code>. <br><br>
+	Para redirecionar páginas em PHP analise a função <code>header('Location: '.$newURL.php)</code>
+  </li>
+	
+  </ol>
+</li><br><li> 
+Após um autenticação com sucesso, deve ser apresentada a página de entrada do projeto
+indicando, no canto superior esquerdo, o nome do utilizador já autenticado.<br>
+No canto superior esquerdo deve desenvolver um botão que lhe permita sair de sessão.
+<xmp>
+<utilizador>						Sair	
+			
+			
+			
+			
+					ReFood-FCUL
+</xmp>
+	</li><br><li> 
+		
+		Teste este mecanismos de autenticação introduzindo sucessivamente senhas corretas e erradas para 2 ou 3 utilizadores e saindo a seguir da sessão.
+	</li>
+</ol>
+
+</li><li><h5 id="autentication-files"> Opcional: registo no sistema de ficheiros do SO - acesso PHP</h5>
+	<ol>
+		<li>	Copie a página actual de entrada do site do seu projeto de grupo para uma nova directoria de nome <code>FS</code>:
+<xmp>
+	$ mkdir ~/public_htm/MMMMM/tp04/FS
+	$ cp -r ~/public_htm/projeto/entrada.html tp04/FS/
+	$ cd tp04/FS/
+</xmp>
+
+</li><li>	Nesta nova versão do projeto
+		crie uma página HTML de autenticação com um formulário que permita enviar um
+		nome de utilizador e uma senha usando o método POST.
+
+</li><li>	Crie um programa PHP que permita:
+		<ol type="a">
+			<li>Aceder a essa informação vinda do browser
+			</li><li>Consultar um ficheiro e procure a senha de um utilizador (pode ser um texto simples)
+		</li></ol>
+
+</li><li>	Modifique a aplicação adicionando uma página que permita adicionar um utilizador novo.
+	<ol type="a">
+		<li>A aplicação do lado do servidor deverá verificar se o utilizador já existe
+		</li><li>Se não existir pode criar um utilizador e senha novos
+		</li><li>Se já existir, deverá avisar o utilizador que esse nome já existe
+		</li><li>Assegure que o nome do utilizador é um email válido (com ‘[a-Z]@[a-Z]’)
+	</li></ol>
+
+
+	</li><li> Após um autenticação com sucesso, deve ser apresentada a página de entrada deste seu projeto
+		indicando, no canto superior esquerdo, o nome do utilizador já autenticado.<br>
+	No canto superior esquerdo deve desenvolver um botão que lhe permita sair de sessão.</li>
+	<xmp>
+<utilizador>						Sair	
+
+
+
+
+			ReFood-FCUL
+</xmp>
+<br><li> 
+		
+	Teste este mecanismos de autenticação introduzindo sucessivamente senhas corretas e erradas para 2 ou 3 utilizadores e saindo a seguir da sessão.</li>
+</ol>
+
+</li><li><h5 id="biblio">Bibliografia</h5>
+	<ul>
+		<li><a href="http://www.php.net/manual/en/">PHP Manual</a></li>
+		<li>PHP Tutorial
+			(<a&#010; href="http://www.webmonkey.com/2010/02/php_tutorial_for_beginners/">
+			<a href="http://w3schools.com/php">W3 Schools</a>)</a&#010;></li>  
+	</ul>
+
+</li></ol>
+
+</body></html>

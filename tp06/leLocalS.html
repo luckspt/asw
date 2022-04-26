@@ -4,10 +4,10 @@
 <h2>Retrieve data from local storage.</h2>
 <p id="demo"></p>
 <script>
-    var text, obj;
     // Retrieving data:
-    text = localStorage.getItem("testJSON");
-    obj = JSON.parse(text);
+    const text = localStorage.getItem("testJSON");
+    const obj = JSON.parse(text);
+
     document.getElementById("demo").innerHTML = obj.morada.rua;
 </script>
 </body>

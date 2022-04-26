@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head></head>
+<body>
+<h1>Acesso à BD de voluntários</h1>
+<h2>The XMLHttpRequest Object</h2>
+<h3>
+    Comece a escrever um nome de um voluntário na BD - só os nomes registados serão completados</h3>
+<form action="">
+
+    Nome: <input type="text" id="txt1" onkeyup="showHint(this.value)">
+</form>
+<p>
+    Sugestões: <span id="txtHint"></span></p>
+<script>
+    function showHint(str) {
+        let xhttp;
+        if (str.length === 0) {
+            document.getElementById("txtHint").innerHTML = "";
+            return;
+        }
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                document.getElementById("txtHint").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "DB-access.php?q=" + str, true);
+        xhttp.send();
+    }
+</script>
+</body>
+</html>

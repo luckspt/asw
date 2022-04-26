@@ -11,18 +11,14 @@
 <p id="demo"></p>
 
 <script>
-    var xhttp = new XMLHttpRequest();
+    const xhttp = new XMLHttpRequest();
 
     // funcionamento síncrono (false)
-
-    xhttp.open("GET","voluntarios.xml",false);
-
+    xhttp.open("GET", "voluntarios.xml", false);
     xhttp.send();
 
-    var papeis=xhttp.responseXML;
-
-    var voluntarios=papeis.getElementsByTagName("nome");
-
+    const papeis = xhttp.responseXML;
+    const voluntarios = papeis.getElementsByTagName("nome");
     // não necessita de parse
     /*
         parser = new DOMParser();
@@ -30,8 +26,8 @@
         var voluntarios=xelem.getElementsByTagName("nome");
     */
 
-    for (i=0;i<voluntarios.length;i++) {
-        document.write(voluntarios[i].childNodes[0].textContent);
+    for (const voluntario of voluntarios) {
+        document.write(voluntario.childNodes[0].textContent);
         //  OU	document.write(voluntarios[i].childNodes[0].nodeValue);
         document.write("<br>");
     }

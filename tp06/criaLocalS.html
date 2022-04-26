@@ -5,16 +5,20 @@
     Store data into local storage.</h2>
 <p id="demo"></p>
 <script>
-    var myObj, myJSON;
-    // Storing data:
-    myObj = { telef: 923147851,
+    const myObj = {
+        telef: 923147851,
         email: "fc56926@gmail.com",
         nome:["Lucas", "Pinto"],
-        grupo:"ASW21",nascido: 2002,
-        morada: {rua: "D. Teodósio", numero: 314, cidade: "Lisboa"} };
+        grupo:"ASW21",
+        nascido: 2002,
+        morada: {
+            rua: "D. Teodósio",
+            numero: 314,
+            cidade: "Lisboa"}
+    };
 
 
-    myJSON = JSON.stringify(myObj);
+    const myJSON = JSON.stringify(myObj);
     localStorage.setItem("testJSON", myJSON);
 </script>
 </body>

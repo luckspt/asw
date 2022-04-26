@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<!-- saved from url=(0118)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619 -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+<meta name="revised" content="5 de março, 2021">
+<meta name="revised" content="16 de março, 2021">
+<meta name="revised" content="1 de abril, 2022">
+<title>Aula de Laboratório sobre Aplicações na Web - 2021/2022</title>
+<link href="./enunciado_files/css" rel="stylesheet" type="text/css">
+<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>5ª Aula Teórico-Prática</h4>
+
+
+
+<p>O Lumen é uma "micro-framework" de uma framework completa para a web - neste caso o Laravel.
+Ou seja uma versão de menor dimensão e mais rápida.</p><p>
+Existem outras "micro-framework" PHP semelhantes - entre mais populares, o Slim e o Silex.
+</p><p>
+O Lumen é uma solução para construir micro-serviços web e não tanto para aplicações
+direcionadas diretamente aos utilizadores. Contudo, também pode ser utilizado para quase tudo.
+</p><p>
+Nesta aula vamos instalar e testar um
+pequeno exemplo de uma API Lumen para acesso à BD mySQL.
+</p><p>
+
+O presente guião é para ser realizado pelo grupo de trabalho de ASW. </p><p>
+Na área de grupo no servidor
+<code>appserver-01.alunos.di.fc.ul.pt</code>
+crie uma diretoria <code>tp05</code> para todo o seu grupo,  só para esta aula:
+</p>
+<xmp>
+$ mkdir ~/tp05
+$ cd ~/tp05
+</xmp>
+
+<h5>Sumário</h5>
+O Lumen é uma solução para construir micro-serviços baseados em Laravel e APIs rápidas.<br>
+O Lumen é uma das micro-frameworks conhecidas como mais rápida.<br>
+Nesta aula vamos instalar e testar o encaminhamento do Lumen na área de grupo do servidor.
+
+<ol type="I">
+  <li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619#instala-lumen"> - Instalação da framework Lumen na área de grupo do servidor</a>
+  </li><li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619#pastas-encaminhamento"> - Diretórios e encaminhamento</a>
+    </li><li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619#usa-mysql"> - Exemplo de acesso à base de dados do servidor</a>
+    </li><li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619#usa-eloquent"> - Criar um modelo</a>
+    </li><li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619#controller-router"> - Configurar um controlador e o encaminhamento</a>
+    </li><li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/120/ASW2122TP05Lumen.html?time=1649338185619#teste-REST"> - Teste da API REST</a>
+</li></ol>
+
+
+
+<p></p>
+
+
+
+<hr>
+
+<ol type="I">
+
+  <li><h5 id="instala-lumen"> - Instalação da framework Lumen na área de grupo do servidor</h5>
+<ol>
+
+<li> Para instalar o Lumen necessita de selecionar a versão do PHP adequado.
+        Estabeleça isso de forma definitiva, para sempre que entrar no servidor.
+  
+<xmp>
+$ echo 'source scl_source enable rh-php70' >> ~/.bash_profile
+$ source ~/.bash_profile
+</xmp>
+</li>
+
+<li>Crie um projeto Lumen designado de <em>blog</em>
+<xmp>
+$ composer create-project --prefer-dist laravel/lumen blog
+</xmp>
+</li>
+
+Este processo demora algum tempo devolvendo bastante informação.
+
+<li>No final execute
+<xmp>
+$ ./blog/vendor/bin/upgrade-carbon
+</xmp>
+</li>
+
+
+<li> Lance agora o web site do <em>blog</em> - onde NN representa o número do seu grupo.
+<xmp>
+$ cd blog
+$ php -S appserver-01.alunos.di.fc.ul.pt:40NN -t public &
+</xmp>
+</li>
+
+
+
+<li>Verifique a instalação do Lumen introduzindo no browser o endereço: 
+<blockquote>
+<code><a href="http://appserver-01.alunos.di.fc.ul.pt:4000/">
+				   http://appserver-01.alunos.di.fc.ul.pt:40NN</a></code>
+</blockquote>
+</li>
+
+
+<li>Para os restantes exercícios do guião deverá ter o seu servidor Lumen ativo. Contudo, para o caso de ser necessário interromper o seu servidor execute:
+<xmp>
+ $ fg 
+  Ctrl-C
+</xmp>
+
+Caso obtenha um erro a relançar o seu servidor, tente obter o número <em>LLLLL</em> de algum servidor que já esteja
+a usar esse porto. Por exemplo:
+<xmp> $ ps -ax | grep :40NN 
+ </xmp>
+ e elimine-o
+ <xmp> $ kill -9 LLLLL
+ </xmp>
+</li>
+</ol>
+
+
+</li><li><h5 id="pastas-encaminhamento"> - Diretórios e encaminhamento</h5>
+
+<ol>
+  <li>
+  <div>
+Explore um pouco a estrutura de diretórios que acaba de criar
+- em quase tudo semelhante à descrição da estrutura das aplicações do Laravel: 
+
+  <a href="https://laravel.com/docs/8.x/structure">
+    https://laravel.com/docs/8.x/structure</a>
+  
+  <div class="rightbox">
+     <img src="./enunciado_files/directory-structure.png" alt="estrutura de diretorias">
+  </div>
+</div>
+</li>
+
+<li>
+Na diretoria <code>routes</code> (encaminhamento) crie o ficheiro <code>web.php</code> com o seguinte conteúdo:
+<xmp>
+<?php
+
+  /** @var \Laravel\Lumen\Routing\Router $router */
+  
+  /*
+  |--------------------------------------------------------------------------
+  | Application Routes
+  |--------------------------------------------------------------------------
+  |
+  | Here is where you can register all of the routes for an application.
+  | It is a breeze. Simply tell Lumen the URIs it should respond to
+  | and give it the Closure to call when that URI is requested.
+  |
+  */
+  
+  $router->get('/', function () use ($router) {
+      return $router->app->version();
+  });
+  
+  $router->get('ASWNN', function () {
+      return '<!DOCTYPE html>' .
+    '<html lang="pt"><head>' .
+    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' .
+    '</head><body><h3>' .
+    'Olá colegas do grupo ASWNN!' .
+    '</h3></body></html>';
+  });
+  
+  $router->post('ASWNN', function () {
+      //
+  });
+  // ============================================================================
+?>
+</xmp>
+</li>
+
+<li>Verifique a execução deste ficheiro PHP introduzindo no browser o endereço,
+  acrescentando agora o encaminhamento ASWNN: 
+  <blockquote>
+  <code><a href="http://appserver-01.alunos.di.fc.ul.pt:4000/ASW00">
+             http://appserver-01.alunos.di.fc.ul.pt:40NN/ASWNN</a></code>
+  </blockquote>  
+</li>
+
+<li>Crie encaminhamentos com o seu número de aluno MMMMM
+  que permitam ao servidor apresentar o seu nome - primeiro e último nome.
+  <blockquote>
+  <code><a href="http://appserver-01.alunos.di.fc.ul.pt:40NN/MMMMM">
+             http://appserver-01.alunos.di.fc.ul.pt:40NN/MMMMM</a></code>
+  </blockquote>  
+
+</li><li>Experimente solicitar encaminhamentos não existentes e/ou causar erros no ficheiro PHP anterior.<br>
+Repare no suporte obtido do Symphony, uma Web Application framework que vem embutida com a instalação do Lumen.
+</li>
+
+
+
+</ol>
+
+
+
+
+
+  
+</li><li><h5 id="usa-mysql"> - Exemplo de acesso à base de dados do servidor</h5>
+ Nesta secção do guião vamos testar a ligação da framework Lumen à BD mysql já criada para o seu grupo.
+ 
+  <ol>
+<li> Altere o ficheiro ".env" no "blog" de modo a poder interagir com a BD
+  já anteriormente criada no servidor da FCUL. 
+
+  <xmp>
+  APP_ENV=local
+  APP_DEBUG=true
+  APP_KEY=
+  APP_TIMEZONE=UTC
+  
+  DB_CONNECTION=mysql
+  DB_HOST=appserver-01.alunos.di.fc.ul.pt
+  DB_PORT=3306
+  DB_DATABASE=aswNN
+  DB_USERNAME=aswNN
+  DB_PASSWORD=a senha do grupo
+   
+  CACHE_DRIVER=array
+  QUEUE_DRIVER=database
+</xmp>
+
+</li>
+
+<li> 
+  O Artisan é a interface de linha de comando incluída no Laravel.
+  O Artisan existe na raiz da sua aplicação e o script artisan fornece vários comandos úteis
+  que podem ajudar na constração da aplicação.
+  Para ver uma lista de todos os comandos Artisan disponíveis, use o comando:
+<xmp>
+  php artisan list
+</xmp>
+
+Vamos executar o seguinte comando por forma a criar um ficheiro de migração designado create_instit_table:
+<xmp>
+$ php artisan make:migration create_instit_table
+</xmp>
+
+</li>
+<li> 
+Altere o ficheiro de migração agora criado na diretoria database/migrations,
+para criar uma tabela para instituições na BD do grupo,com os seguintes atributos:
+id, telefone, rua, número, localidade e código-postal.
+
+<xmp>
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateInstitTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('instit', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('telefone');
+            $table->string('rua');
+            $table->integer('numero');
+            $table->string('localidade');
+            $table->string('codpostal'); 
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('instit');
+    }
+}
+</xmp>
+</li><li>Execute agora a migração no diretório <code>blog</code>
+  <xmp>
+    php artisan migrate
+    </xmp>
+</li>
+
+<li>Usando o seu cliente mySQL habitual,
+  verifique as alterações na BD do seu grupo.</li>
+
+
+</ol>
+
+</li><li><h5 id="usa-eloquent"> - Criar um modelo</h5>
+  
+   <ol>
+    <li>
+<ul>
+  <li> Laravel inclui o Eloquent, um mapper relacional de objetos (ORM) que
+facilita a interação com a nossa base de dados.
+Ao utilizar o Eloquent, cada tabela de base de dados tem um "Modelo" correspondente
+que é utilizado para interagir com essa tabela. Além de recuperar registos da tabela de bases de dados,
+os modelos Eloquent também lhe permite inserir, atualizar e apagar registos da tabela.
+</li>
+<li>O Laravel inclui ainda os Facades que servem como "proxies estáticos" às
+classes subjacentes no "service container",
+fornecendo o benefício de uma sintaxe concisa e expressiva e
+ mantendo mais testabilidade e flexibilidade do que os métodos estáticos tradicionais.
+Não precisa de entender totalmente como as Facades funcionam por dentro.
+Todas elas são referidas através do "Illuminate\Support\Facades namespace".
+</li>
+
+<li>O Lumen (ao contrário do Laravel) não acede por omissão ao Eloquent nem aos Facades.
+Para estarem acessíveis é preciso tirar dos comentários a sua referência no bootstrap/app.php.
+
+<xmp>
+
+$app->withFacades();
+$app->withEloquent();
+
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
+</xmp>
+</li>
+</ul>
+ 
+</li><li>Na diretoria <code>app</code> crie agora o modelo <code>Instituicao.php</code> com o código seguinte
+  <xmp>
+  <?php
+    namespace App;
+  use Illuminate\Database\Eloquent\Model;
+  
+  class Instituicao extends Model
+  {
+      protected $table = 'instit';
+      /**
+       * The attributes that are mass assignable.
+       *
+       * @var array
+       */
+      protected $fillable = [
+          'telefone', 'rua', 'numero', 'localidade', 'codpostal'
+      ];
+  
+  }
+  </xmp>
+  </li>
+
+</ol>
+
+</li><li><h5 id="controller-router"> - Configurar um controlador e o encaminhamento</h5>
+  
+   <ol>
+    <li>
+Vamos alterar o nome de <code>ExampleController</code> para <code>instituicaoController</code>.
+Na diretoria <code>app\Http\Controllers</code> vamos colocar este código no ficheiro
+<code>instituicaoController.php</code>.
+<xmp>
+<?php
+namespace App\Http\Controllers;
+use App\Instituicao;
+use Illuminate\Http\Request;
+
+class InstituicaoController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+    
+     public function index()
+     {
+     
+       $instituicao = Instituicao::all();
+       return response()->json($instituicao);
+     }
+
+     public function create(Request $request)
+     {
+       $Instituicao = new Instituicao;
+       $Instituicao->telefone= $request->telefone;
+       $Instituicao->rua = $request->rua;
+       $Instituicao->numero= $request->numero;
+       $Instituicao->localidade= $request->localidade;
+       $Instituicao->codpostal= $request->codpostal;
+       $Instituicao->save();
+       return response()->json($Instituicao);
+     }
+
+     public function show($id)
+     {
+        $Instituicao = Instituicao::find($id);
+        return response()->json($Instituicao);
+     }
+
+     public function update(Request $request, $id)
+     { 
+        $Instituicao= Instituicao::find($id);
+        $Instituicao->telefone = $request->input('telefone');
+        $Instituicao->rua = $request->input('rua');
+        $Instituicao->numero = $request->input('numero');
+        $Instituicao->localidade = $request->input('localidade');
+        $Instituicao->codpostal = $request->input('codpostal');
+        $Instituicao->save();
+        return response()->json($Instituicao);
+     }
+
+     public function destroy($id)
+     {
+        $instituicao = instituicao::find($id);
+        $instituicao->delete();
+        return response()->json('instituicao removed successfully');
+     }
+   
+}
+</xmp>
+
+</li><li>
+
+  Por fim, define-se o encaminhamento. 
+  Abra o arquivo <code>web.php</code> na pasta <code>routes</code> e adicione o seguinte código:
+
+<xmp>
+$router->group(['prefix'=>'api/v1'], function() use($router){
+
+    $router->get('/Instituicoes', 'instituicaoController@index');
+    $router->post('/Instituicoes', 'instituicaoController@create');
+    $router->get('/Instituicoes/{id}', 'instituicaoController@show');
+    $router->put('/Instituicoes/{id}', 'instituicaoController@update');
+    $router->delete('/Instituicoes/{id}', 'instituicaoController@destroy');
+
+});
+
+</xmp>
+
+Agrupou-se os encaminhamentos adicionando-se o prefixo api/v1,
+para ser um parâmetro comum compartilhado por todos os URIs.
+
+</li>
+</ol>
+
+</li><li><h5 id="teste-REST"> - Teste da API REST</h5>
+<p>
+  Na secção anterior acabamos por criar um conjunto de micro-serviços que permitem ilustrar alguns conceitos de uma
+  API RESTful.
+</p><p>
+  REST (REpresentational State Transfer) é um estilo arquitetural para a comunicação web entre aplicações,
+  que depende de um protocolo sem estado (geralmente HTTP) para interação.
+</p><p>
+  Vamos ilustrar nesta secção o uso dos verbos/acções HTTP - aqui descritas em termos dos seu significado semântico para APIs REST:
+</p><p>
+  </p><ul>
+    <li>GET: recuperar recursos;
+    </li><li>POST: criar recursos;
+    </li><li>PUT: atualizar recursos;
+    </li><li>DELETE: excluir recursos.
+  </li></ul>
+<p></p><p>
+Existe um repositório git para APIs REST Lumen
+<code>
+  <a href="https://github.com/techmahedy/lumen-rest-api-development">
+  https://github.com/techmahedy/lumen-rest-api-development</a>.
+  </code>
+</p>
+
+<ol>
+<li>      
+      Por forma a testar a API, insira agora alguns dados fictícios na tabela <code>instituicao</code> da BD do seu grupo,
+      usando o seu cliente mySQL habitual. 
+      <xmp>
+        INSERT INTO instit (id,telefone,rua,numero,localidade,codpostal) VALUES
+          (1,965657643,'D. João I',83,'Lisboa',2235),
+          (2,965657683,'D. Pedro IV',4,'Porto',1234),
+          (3,935657693,'D. Afonso Henriques',3,'Guimarães',35236),
+          (4,964957693,'D. Dinis',373,'Leiria',73936);
+      </xmp>
+  </li>
+  
+<li>
+Visualização de todos os itens no browser (GET):
+<code>
+  <a href="http://appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/">
+  http://appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/</a>
+</code>
+</li>
+
+
+<li>
+<p>
+Visualização de itens individuais no browser (GET):
+<code>
+  <a href="http://appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/2">
+  http://appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/2</a>
+</code>
+</p>
+<p>
+De seguida use a consola de uma máquina com <code>curl</code> e acesso web.
+</p>
+</li>
+
+<li>  Solicitação DELETE para excluir itens da BD: 
+  <xmp>$ curl -X DELETE appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/2</xmp>
+  
+    Visualização de itens: 
+    <xmp>$ curl -v appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes</xmp>
+    </li>
+
+  <li>  Solicite POST para a inserção de instituição individual: 
+  <xmp>
+  curl -X POST appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/ \
+  -H 'Content-Type: application/json' \
+  -d '{"telefone":934557683,"rua":"<o_seu_nome>","numero":<o seu_número_de_aluno>,"localidade":"Lisboa","codpostal":"1247"}'
+</xmp>
+
+</li><li>
+Crie o ficheiro <code>aMinhaRua.json</code> com o seguinte conteúdo:
+<xmp>{"telefone":964557683,"rua":"<o_seu_nome>",
+"numero":<o seu_número_de_aluno>,"localidade":"Lisboa","codpostal":"1247"}
+</xmp>
+  <xmp>
+  curl -X POST appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/ \
+  -H 'Content-Type: application/json' -d @aMinhaRua.json 
+  </xmp>
+
+  Visualização de itens: 
+    <xmp>$ curl -v appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes</xmp>
+
+  </li><li> Solicite um PUT para a atualização de uma instituição ( &lt; n &gt; é o seu número de ordem no grupo - na ordenação alfabética dos nomes dos membros): 
+    <xmp>
+    curl -X PUT appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/<n> \
+    -H 'Content-Type: application/json' \
+    -d '{"rua":"Rua D. <o_seu_nome><"}'
+  </xmp>
+    Visualização de instituição  individual: 
+    <xmp>$ curl -v appserver-01.alunos.di.fc.ul.pt:40NN/api/v1/Instituicoes/<n></xmp>
+</li></ol>
+
+</li><li><h5 id="biblio"> - Bibliografia</h5>
+	<ul>
+		<li><a href="http://www.php.net/manual/en/">PHP Manual</a></li>
+		<li><a href="http://www.webmonkey.com/2010/02/php_tutorial_for_beginners/">PHP Tutorial</a></li>
+		<li><a href="http://w3schools.com/php">W3 Schools</a></li>  
+    <li><a href="https://lumen.laravel.com/docs/8.x">Lumen Documentation</a></li>  
+	</ul>
+</li>
+</ol>
+
+
+
+
+</body></html>
