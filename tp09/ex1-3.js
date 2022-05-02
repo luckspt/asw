@@ -1,0 +1,1 @@
+console.log('Daqui LUCAS espaço PINTO responde com Node.js');

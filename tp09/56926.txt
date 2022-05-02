@@ -1,0 +1,9 @@
+A pilha MEAN (MongoDB, Express.js, AngularJS e Node.js) é um software
+open-source em JavaScript para construir aplicações e sítios web dinâmicos.
+Como todos os componentes da pilha MEAN oferecem suporte a programas escritos em JavaScript,
+os aplicativos MEAN podem ser escritos em um só linguagem para os ambientes de execução
+do servidor e do cliente.
+Comparando com outras pilhas populares de desenvolvimento da Web, como a pilha LAMP,
+os componentes da pilha MEAN são de nível superior, 
+incluindo uma camada de apresentação de aplicativos da Web,
+mas sem a camada de sistema operacional.

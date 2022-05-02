@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<!-- saved from url=(0105)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/121/ASW2122TP09NodeExpress.html -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+	<meta name="revised" content="25 de Abril, 2019">
+	<meta name="revised" content="8 de Maio, 2020">
+	<meta name="revised" content="16 de Abril, 2021">
+	<meta name="revised" content="2 de Maio, 2022">
+	<title>MEAN stack: Node e Express: - Aplicações e Serviços na Web 2021/2022</title>
+	<link href="./enunciado_files/css" rel="stylesheet" type="text/css">
+	<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+	
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>9ª Aula Teórico-Prática</h4>
+A pilha MEAN (MongoDB, Express.js, AngularJS e Node.js) é um software
+open-source em JavaScript para construir aplicações e sítios web dinâmicos.<br>
+<br>
+Como todos os componentes da pilha MEAN oferecem suporte a programas escritos em JavaScript,
+os aplicativos MEAN podem ser escritos em um só linguagem para os ambientes de execução
+do servidor e do cliente.<br>
+<br>
+Comparando com outras pilhas populares de desenvolvimento da Web, como a pilha LAMP,
+os componentes da pilha MEAN são de nível superior, <br>
+incluindo uma camada de apresentação de aplicativos da Web, mas sem a camada de sistema operacional.<br>
+<br>
+O propósito desta aula é exemplificar e testar aspectos essenciais dos componentes Node e Express do MEAN:
+
+<ol type="I">
+<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/121/ASW2122TP09NodeExpress.html#instalarNode">Verificar a instalação Node.js com execução no terminal;</a></li>
+<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/121/ASW2122TP09NodeExpress.html#servidorNode">Criar um servidor em Node.js;</a></li>
+<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/121/ASW2122TP09NodeExpress.html#Express">Usar o Express.</a></li>
+</ol>
+
+Substitua <em>MMMMM</em> e "PRIMEIRO NOME espaço ÚLTIMO NOME", respectivamente, pelo seu nº de aluno e pelo seu nome em todo o texto seguinte.
+ <hr>
+
+<ol type="I">
+<li> <h5>Introdução ao Node.js</h5>
+
+<ol>
+	<a name="instalarNode"></a>
+
+
+	<li>	Na área de grupo no servidor
+		<code>appserver-01.alunos.di.fc.ul.pt</code> crie uma directoria <code>tp09</code> só para esta aula:
+		<xmp style="background-color: #e0e2e2;">
+		$ mkdir ~/public_html/MMMMM/tp09
+		$ chmod -R 755 ~/public_html/MMMMM/tp09
+		$ cd ~/public_html/MMMMM/tp09
+		</xmp>
+		
+	</li>
+
+<li>Verificar a instalação Node.js com execução no terminal
+<xmp>
+ $ node -v
+ $ node -h
+</xmp>
+</li>
+
+
+<li>Crie um ficheiro com o nome ex1-3.js, adaptando o seguinte conteúdo:
+
+<xmp>
+ 
+console.log('Daqui PRIMEIRO NOME espaço ÚLTIMO NOME responde com Node.js');
+
+</xmp>
+
+</li><li> Execute-o no terminal, na mesma directoria, utilizando o comando seguinte:
+<p>
+
+</p><xmp>
+$ node ex1-3.js
+
+</xmp>
+
+</li><li>Crie um ficheiro chamado MMMMM.txt com o seguinte conteúdo:
+
+<xmp>
+	A pilha MEAN (MongoDB, Express.js, AngularJS e Node.js) é um software
+	open-source em JavaScript para construir aplicações e sítios web dinâmicos.
+	Como todos os componentes da pilha MEAN oferecem suporte a programas escritos em JavaScript,
+	os aplicativos MEAN podem ser escritos em um só linguagem para os ambientes de execução
+	do servidor e do cliente.
+	Comparando com outras pilhas populares de desenvolvimento da Web, como a pilha LAMP,
+	os componentes da pilha MEAN são de nível superior, 
+	incluindo uma camada de apresentação de aplicativos da Web,
+	mas sem a camada de sistema operacional.
+</xmp>
+
+</li><li> Crie outro ficheiro, com o nome ex1-6.js, adaptando o seguinte conteúdo
+
+
+<xmp>
+
+var fs = require("fs");
+
+var data = fs.readFileSync('MMMMM.txt');
+
+console.log(data.toString());
+console.log("O programa do PRIMEIRO NOME espaço ÚLTIMO NOME acaba aqui!");
+
+</xmp>
+
+Execute o ficheiro no terminal, como fez anteriormente. 
+<p>
+</p></li><li>Crie outro ficheiro, com o nome ex1-7.js, adaptando o seguinte conteúdo
+
+<xmp>
+ 
+var fs = require("fs");
+
+fs.readFile('MMMMM.txt', function (err, data) {
+    if (err) return console.error(err);
+    console.log(data.toString());
+});
+
+console.log("O programa do PRIMEIRO NOME espaço ÚLTIMO NOME acaba aqui!");
+
+</xmp>
+
+Execute o ficheiro no terminal, como fez anteriormente.
+Repare na saída do programa e compare-a com o exemplo anterior.
+</li></ol>
+
+	<a name="servidorNode"></a>
+
+</li><li><h5>Criar um servidor em Node.js</h5>
+
+<ol>
+<li>De seguida vamos criar um servidor web em http://appserver.alunos.di.fc.ul.pt num porto HTTP atribuído a cada grupo: o porto <em>40NN</em>
+em que <em>NN</em> é o número do seu grupo.<br>
+Cada aluno tem de se coordenar com os elementos do seu grupo, por forma a usarem este porto sem conflitos.
+<br>
+Crie um ficheiro com o nome ex2-1.js, adaptando o seguinte conteúdo:<br>
+
+<xmp>
+ 
+var port = 40NN;
+ 
+var http = require('http');
+
+http.createServer(
+	function(req, res) {
+		res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+		res.end("Aqui temos o 1º servidor Node do PRIMEIRO NOME espaço ÚLTIMO NOME!");
+}).listen(port);
+console.log('Ver o servidor Node do PRIMEIRO NOME espaço ÚLTIMO NOME em: http://appserver.alunos.di.fc.ul.pt:'+ port);
+
+</xmp>
+
+Execute o ficheiro e experimente no browser aceder a http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>.
+
+<p>
+</p></li><li>
+Para interromper o servidor faça <em>Ctrl-C</em>. <br>
+<p>
+Caso obtenha um erro a relançar um servidor, tente obter o número <em>LLLLL</em> de algum servidor que já esteja
+a usar esse porto. Por exemplo:
+</p><xmp>
+ps -ax | grep ex2-1
+ </xmp>
+ e elimine-o
+ <xmp>
+ kill -9 LLLLLL
+ </xmp>
+
+ Experimente lançar o servidor no terminal, com o seguinte comando:
+<p>
+
+</p><xmp>
+$ node ex2-1.js &
+
+</xmp>
+O &amp; no final do comando determina a execução do servidor na retaguarda, permitindo-lhe continuar a trabalhar no terminal.<br>
+Pare o servidor identificando o número do processo para o eliminar de seguida.
+
+<p>
+</p></li><li>	Experimente executar mais algum código (ex2-3.js).
+
+<xmp>
+
+var port = 40NN;
+
+var http = require('http');
+http.createServer(
+	function(req, res) {
+		var person = {unome:"ÚLTIMO NOME", pnome:"PRIMEIRO NOME", loc:"Lisboa"}; 
+		var text = "";
+		var x;
+		var fs = require("fs");
+		var data = fs.readFileSync('MMMMM.txt');
+		for (x in person) {text += person[x] + ", ";}
+		res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+		res.write("Servidor pessoal\n");
+		res.write(text+"\n\n")
+		res.end(data.toString());
+
+	}).listen(port);
+	console.log('Ver o servidor Node do PRIMEIRO NOME espaço ÚLTIMO NOME em: http://appserver.alunos.di.fc.ul.pt:'+ port);
+</xmp>
+
+</li>
+
+
+<li>Experimente servir um conteúdo complexo em HTML.
+	Descarregue um HTML já existente num ficheiro de nome <em>MMMMM.html</em>. Guarde o seguinte código em ex2-4.js, execute e experimente no browser aceder a http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>.
+
+<xmp>
+ 
+var port = 40NN;
+
+var http = require('http');
+http.createServer(
+	function(req, res) {
+		var fs = require("fs");
+		var data = fs.readFileSync('MMMMM.html');
+		res.writeHead(200, {'Content-Type': 'text/html'});
+		res.write(data.toString());
+	}).listen(port);
+console.log('Ver o servidor Node do PRIMEIRO NOME espaço ÚLTIMO NOME em: http://appserver.alunos.di.fc.ul.pt:'+ port);
+
+</xmp>
+</li></ol>
+
+	<a name="Express"></a>
+
+</li><li> <h5>Usar o Express</h5>
+
+O Express é uma framework de desenvolvimento de aplicações web para o Node.js e fornece um conjunto robusto de recursos para
+o desenvolvimento rápido de aplicações web e móveis.
+Algumas das características principais do Express:
+<ul>
+<li>
+Define uma tabela de roteamento que é usada para executar ações diferentes com base no método HTTP e URL.
+</li><li>
+Permite configurar funções middleware para responder às solicitações HTTP.
+</li><li>
+Permite gerar dinamicamente parte de páginas HTML passando argumentos para templates (templates engines).
+</li></ul>
+<p>
+</p><ol>
+
+<li> O NPM (Node Package Manager) permite instalar outros módulos Node.
+No terminal, execute os seguinte comandos:
+<xmp>
+$ npm init
+# <enter> em todas as opções 
+$ npm install express
+
+</xmp>
+<p>
+</p></li><li>Crie um ficheiro com o nome ex3-2.js, adaptando o seguinte conteúdo:<br>
+
+<xmp>
+var port = 40NN;
+
+var express = require('express');
+var app = express();
+
+app.get('/', function (req, res) {
+  res.send('A app do PRIMEIRO NOME espaço ÚLTIMO NOME!');
+});
+
+app.listen(port, function () {
+console.log('App a ouvir o porto '+port+'!');
+});
+
+
+</xmp>
+
+Execute o ficheiro e experimente no browser aceder a http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>.
+<p>
+</p></li><li>Complemente o ficheiro anterior, adaptando o seguinte conteúdo:
+
+<xmp>
+app.get('/meunome/', function (req, res) {
+  res.send('O meu nome é PRIMEIRO NOME espaço ÚLTIMO NOME')
+})
+
+app.get('/meunumero/', function (req, res) {
+  res.send('O meu número de aluno é NNNNN')
+})
+
+</xmp>
+
+Reinicie o servidor Node e experimente no browser aceder a 
+<br>http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>/meunome<br>
+e depois a 
+<br>http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>/meunumero<br>
+<p>
+</p></li><li>Complemente o ficheiro anterior, adaptando o seguinte conteúdo::
+
+<xmp>
+
+app.get('/meunome/:name', function(req, res) {
+    res.send('Olá ' + req.params.name + '!');
+});
+</xmp>
+
+Reinicie o servidor Node e experimente aceder no browser a<br>
+http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>/meunome/confinados
+
+</li>
+
+
+<li>
+Adapte o script anterior para que o servidor Node, mediante um pedido
+<br>http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>/enviaHTML/<em>MMMMM</em><br>
+envie para o cliente o conteúdo do ficheiro <em>MMMMM.html</em>.
+
+
+<!--Ver o exercício I.4 desta TP11.-->
+
+<p>
+</p></li><li>Insira mais um ou mais ficheiros HTML na directoria do servidor.
+Adapte o script anterior para que o servidor Node envie ao cliente qualquer das páginas HTML na directoria do servidor,
+mediante o pedido
+<br>http://appserver.alunos.di.fc.ul.pt:40<em>NN</em>/enviaHTML/<em>nome_página</em><br>
+
+<p>
+</p></li><li>
+Crie agora também uma página <em>notfound.html</em>, com o aviso "Ficheiro inexistente".<br>
+Adapte o script anterior para que o servidor Node, caso o ficheiro <em>nome_página</em>.html não exista,
+  envie ao cliente o conteúdo do ficheiro <em>notfound.html</em>. 
+
+<!--Ver o exercício II.3 da TP11.-->
+
+
+</li></ol>
+
+</li></ol>
+
+<h5>Bibliografia</h5>
+<ul>
+<li>Node.js: <a href="https://nodejs.org/api/documentation.html">https://nodejs.org/api/documentation.html</a>
+</li><li>NodeJs W3Schools: <a href="http://www.w3schools.com/nodejs/default.asp">http://www.w3schools.com/nodejs/default.asp</a>
+</li><li>Express: <a href="http://expressjs.com/en/4x/api.html">http://expressjs.com/en/4x/api.html</a>
+</li></ul>
+
+
+
+
+
+</body></html>
