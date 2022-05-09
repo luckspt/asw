@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<!-- saved from url=(0098)https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/125/ASW2122TP08SOAP.html -->
+<html lang="pt"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="author" content="Carlos Teixeira, Carlos.Teixeira@Ciencias.ULisboa.Pt">
+	<meta name="revised" content="25 de Abril, 2019">
+	<meta name="revised" content="1 de Maio, 2020">
+	<meta name="revised" content="8 de Abril, 2021">
+	<meta name="revised" content="8 de Maio, 2022">
+	<title>SOAP - ASW 2021/2022</title>
+	<link href="./enunciado_files/css" rel="stylesheet" type="text/css">
+	<link href="./enunciado_files/1819ASW.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<h3 class="pagetitle">Aplicações e Serviços na Web 2021/2022</h3>
+<h4>8ª Aula Teórico-Prática</h4>
+
+O propósito desta aula é familiarizar os alunos com a biblioteca NuSOAP para:
+<ol type="I">
+<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/125/ASW2122TP08SOAP.html#criaNuSOAP">Criar um servidor web e seus clientes, usando o nusoap;</a></li>
+<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/125/ASW2122TP08SOAP.html#examWebService">Examinar um Web Service;</a></li>
+<li><a href="https://moodle.ciencias.ulisboa.pt/pluginfile.php/395138/mod_page/content/125/ASW2122TP08SOAP.html#WebServiceDB">Comunicar com uma base de dados por via de um Web Service.</a></li>
+</ol>
+<hr>
+
+<ol type="I">
+
+	<a name="criaNuSOAP"></a>
+
+<li> <h5>Criar um servidor web e seus clientes, usando o nusoap</h5>
+
+<ol>
+<li> Inicializar nusoap
+<ol type="a">
+    <li> A biblioteca nusoap está disponível em:
+		<a href="http://sourceforge.net/projects/nusoap/"> http://sourceforge.net/projects/nusoap/</a>. <br>
+		Descarregue-a e descompacte o zip
+    </li><li> Copie a pasta lib completa para dentro da pasta ~/public_html/MMMMM/tp08 da sua área do appserver.<br>
+		Deverá ficar com uma estrutura de directórios: ~/public_html/MMMMM/tp08/lib
+</li>
+<li> Na pasta lib, dê privilégios de leitura e execução a outros: chmod 755 *.php
+</li></ol>
+
+</li><li>Criar um WebService simples
+<ol type="a">
+    <li>Crie um servidor SOAP num ficheiro (ws_nome_serv.php) em http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp08. <br>Analise o código que cria um servidor com uma única função, cria o objecto servidor e regista a função no servidor:
+
+<xmp>
+<?php
+require_once "lib/nusoap.php";
+function saudacao($nome)
+{	$horas=intval(date('H'));
+	if ($horas> 6 AND $horas <12)
+	{
+		$s= "Bom Dia! ";
+	} elseif ($horas>=12 AND $horas<20) {
+		$s= "Boa Tarde! ";
+	} else
+	{
+		$s="Boa Noite! ";
+	}
+return $s.$nome;
+}
+
+$server = new soap_server();
+
+// Vamos inserir aqui mais uma linha, na pergunta II-4
+
+$server->register("saudacao", // nome metodo
+	array('nome' => 'xsd:string'), // input
+	array('return' => 'xsd:string'), // output
+	'uri:cumpwsdl', // namespace
+	'urn:cumpwsdl#saudacao', // SOAPAction
+	'rpc', // estilo
+	'encoded' // uso
+);
+
+@$server->service(file_get_contents("php://input"));
+
+?>
+</xmp>
+</li>
+
+<li> Nesta alínea precisa de combinar o seu trabalho com um outro colega de <strong>outro grupo </strong>.
+	Insira no código seguinte número de aluno PPPPP e respectivo grupo QQ.
+	Isto deverá permitir que consultar o servidor dele e vice-versa - sem acesso ao php dele.
+	Aproveite a presença na aula para encontrar um colega e verificar com ele se tudo funciona bem.
+	<!-- o texto seguinte era para a aula online -->
+	<!-- Se necessário o docente poderá providenciar uma <em>breakout room</em> só para os dois, para este efeito. -->
+
+Crie um cliente SOAP (ws_nome_cli.php) que deverá aceder ao
+endereço do servidor desse colega. Por isso, adapte o código do seguinte.
+
+<xmp>
+<?php
+require_once "lib/nusoap.php";
+$client = new nusoap_client(
+	'http://appserver-01.alunos.di.fc.ul.pt/~aswQQ/PPPPP/tp08/ws_nome_serv.php'
+);
+$error = $client->getError();
+$result = $client->call('saudacao', array('nome' => 'O-SEU-PRIMEIRO-NOME'));	//handle errors
+if ($client->fault)
+{	//check faults
+}
+else
+{	$error = $client->getError();	//handle errors
+	echo "<h2>$result</h2>";
+}
+?>
+</xmp>
+
+</li>
+<li> Teste o serviço, chamando o cliente através do browser.
+</li>
+<li> Crie uma página HTML (getNome.html) que permita a um 
+utilizador introduzir o nome num formulário. Este nome deve ser enviado 
+via POST para o cliente SOAP.
+</li>
+<li> Crie um cliente SOAP (ws_getNome_cli.php) a partir do anteriormente apresentado, 
+para que este receba um pedido (nome) e o processe adequadamente no 
+mesmo servidor.
+
+</li>
+<li> Teste a sua nova página HTML.
+
+</li></ol>
+</li></ol>
+
+<a name="examWebService"></a>
+
+</li><li><h5>Examinar um Web Service: mensagens SOAP entre cliente e servidor e WSDL</h5>
+
+<ol>
+<li>Inclua o seguinte código no final do ficheiro do cliente SOAP do exercício I-2b:
+
+<xmp>
+echo "<h2>Pedido</h2>";
+echo "<pre>" . htmlspecialchars($client->request, ENT_QUOTES) . "</pre>";
+echo "<h2>Resposta</h2>";
+echo "<pre>" . htmlspecialchars($client->response, ENT_QUOTES) . "</pre>";
+</xmp>
+</li>
+<li>Teste de novo o cliente. Pode agora examinar os pedidos e as respostas SOAP realizadas.
+</li>
+<li>Utilize o browser para aceder directamente ao php do servidor SOAP do exercício I-2a - desta vez não vai obter informação útil sobre o serviço.
+</li><li>Inclua a seguinte linha, no script do servidor SOAP, antes do 
+registo da função. Tal vai permitir configurar e depois visualizar o 
+ficheiro <em>WSDL - Web Services Description Language</em> com a descrição do serviço.
+
+<xmp>
+$server->configureWSDL('cumpwsdl', 'urn:cumpwsdl');
+</xmp>
+
+</li>
+<li>Use de novo o browser para chamar o servidor SOAP.
+</li></ol>
+<a name="WebServiceDB"></a>
+</li>
+
+<li><h5>Comunicar com uma base de dados por via de um Web Service</h5>
+<ol>
+<li>
+O ficheiro seguinte (ws_DB_serv.php) implementa outro servidor SOAP. 
+Este agora fornece os dados dos clientes da base de dados criada em TPs 
+anteriores, cujo nome têm as primeiras letras iguais às fornecidas pelo 
+script SOAP cliente. 
+
+<xmp>
+ <?php
+require_once "lib/nusoap.php";
+
+function nomeclientes($nome)
+{
+	$dbhost="appserver-01.alunos.di.fc.ul.pt";
+	$dbuser="aswNN";	$dbpass="A-VOSSA-PASSWORD";	$dbname="aswNN";
+	//Cria a ligação à BD
+	$conn=mysqli_connect($dbhost,$dbuser,$dbpass,$dbname);
+	//Verifica a ligação à BD
+	if(mysqli_connect_error()){die("Database connection failed:".mysqli_connect_error());}
+
+	$sql="SELECT * FROM Cliente WHERE Nome LIKE \"".$nome."%\"";
+	$result=mysqli_query($conn,$sql);
+	while($row=mysqli_fetch_array($result,MYSQLI_NUM))
+	{
+		$html[]="<tr><td>".implode("</td><td>",$row)."</td></tr>";
+	}
+	$html="<table>".implode("\n",$html)."</table>";	
+	// echo $html;
+	mysqli_close($conn);
+	return $html;
+}
+
+$server = new soap_server();
+$server->configureWSDL('cumpwsdl', 'urn:cumpwsdl');
+$server->register("nomeclientes", // nome metodo
+array('nome' => 'xsd:string'), // input
+array('return' => 'xsd:string'), // output
+	'uri:cumpwsdl', // namespace
+	'urn:cumpwsdl#nomeclientes', // SOAPAction
+	'rpc', // estilo
+	'encoded' // uso
+);
+
+@$server->service(file_get_contents("php://input"));
+
+?>
+</xmp>
+
+</li>
+<li>Teste agora esse servidor com o seguinte script para o cliente (ws_DB_cli.php).
+
+<xmp>
+ <?php
+require_once "lib/nusoap.php";
+
+$client = new nusoap_client(
+    'http://appserver-01.alunos.di.fc.ul.pt/~aswNN/MMMMM/tp08/ws_DB_serv.php'
+);
+$error = $client->getError();
+$result = $client->call('nomeclientes', array('nome' => 'Mar'));	//handle errors
+
+echo "<h2>Pedido</h2>";
+echo "<pre>" . htmlspecialchars($client->request, ENT_QUOTES) . "</pre>";
+echo "<h2>Resposta</h2>";
+echo "<pre>" . htmlspecialchars($client->response, ENT_QUOTES) . "</pre>";
+
+if ($client->fault)
+{   //check faults
+}
+else {    $error = $client->getError();		 //handle errors
+   		 echo "<h2>$result</h2>";
+}
+?>
+</xmp>
+
+</li></ol>
+</li></ol>
+<h5>Tente aplicar estes conhecimentos no projeto de grupo (na 3ªfase)!</h5>
+
+</body></html>
